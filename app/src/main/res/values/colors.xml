@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 品牌主色：一个偏冷的青蓝，长时间阅读不刺眼 -->
+    <color name="brand">#FF2F6F62</color>
+    <!-- 深色主题下 FAB 的底色：比 brand 深一档，保证白字够 4.5:1 -->
+    <color name="brand_deep">#FF23574D</color>
+    <color name="brand_container">#FFB6E3D8</color>
+    <color name="brand_on_container">#FF00201B</color>
+
+    <!-- 阅读器背景：米白而非纯白，降低屏读眩光 -->
+    <color name="page_light">#FFFBF8F3</color>
+    <color name="page_dark">#FF121413</color>
+
+    <color name="surface_variant">#FFE3E5E1</color>
+    <color name="surface_variant_dark">#FF2A2E2C</color>
+
+    <color name="text_primary">#FF1A1C1B</color>
+    <color name="text_secondary">#FF5C615E</color>
+
+    <color name="text_primary_dark">#FFE6E9E6</color>
+    <color name="text_secondary_dark">#FFB4BAB6</color>
+
+    <!-- 点词高亮与听书逐词高亮的底色 -->
+    <color name="highlight_word">#FFF3D98C</color>
+    <color name="highlight_sentence">#3389C5B8</color>
+</resources>

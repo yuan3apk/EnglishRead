@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EnglishRead</string>
+
+    <!-- 书架 -->
+    <string name="action_import">导入书籍</string>
+    <string name="library_empty">书架还是空的\n导入一本英文书开始阅读</string>
+    <string name="library_importing">正在导入…</string>
+    <string name="library_import_failed">导入失败：%1$s</string>
+
+    <!-- 阅读器 -->
+    <string name="reader_translate_paragraph">翻译本段</string>
+    <string name="reader_translating">翻译中…</string>
+    <string name="reader_translate_failed">翻译失败，点击重试</string>
+    <string name="reader_need_api_key">未配置翻译服务，请到设置里填写 API</string>
+    <string name="action_play">朗读</string>
+    <string name="action_pause">暂停</string>
+    <string name="action_add_vocab">加生词本</string>
+    <string name="vocab_added">已加入生词本</string>
+
+    <!-- 设置 -->
+    <string name="settings_title">设置</string>
+    <string name="settings_translation">翻译服务</string>
+    <string name="settings_api_base_url">接口地址</string>
+    <string name="settings_api_key">API Key</string>
+    <string name="settings_api_model">模型</string>
+    <string name="settings_privacy_hint">段落原文会发送到上面配置的第三方翻译服务。单词释义走本地词典，不联网。</string>
+</resources>

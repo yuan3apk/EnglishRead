@@ -1,0 +1,32 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.EnglishRead" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/brand_on_container</item>
+        <item name="android:colorBackground">@color/page_light</item>
+        <item name="colorSurface">@color/page_light</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+    </style>
+
+    <style name="Theme.EnglishRead" parent="Base.Theme.EnglishRead" />
+
+    <!-- 排版：标题/正文/说明三档，别再加第四档 -->
+    <style name="TextAppearance.EnglishRead.Title" parent="TextAppearance.Material3.TitleMedium" />
+
+    <style name="TextAppearance.EnglishRead.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:lineSpacingMultiplier">@dimen/reader_line_spacing_mult</item>
+    </style>
+
+    <style name="TextAppearance.EnglishRead.Caption" parent="TextAppearance.Material3.BodySmall" />
+
+    <style name="Widget.EnglishRead.BookCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="android:layout_marginHorizontal">@dimen/space_m</item>
+        <item name="android:layout_marginBottom">@dimen/space_s</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 间距：4 的倍数，够用就不再加档 -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">16dp</dimen>
+    <dimen name="space_l">24dp</dimen>
+
+    <dimen name="book_cover_width">48dp</dimen>
+    <dimen name="book_cover_height">64dp</dimen>
+
+    <!-- 阅读器排版：默认值，设置页可覆盖 -->
+    <dimen name="reader_text_size">18sp</dimen>
+    <dimen name="reader_line_spacing_mult">1.5</dimen>
+    <dimen name="reader_para_spacing">16dp</dimen>
+    <dimen name="reader_side_margin">24dp</dimen>
+    <dimen name="reader_translation_text_size">15sp</dimen>
+</resources>

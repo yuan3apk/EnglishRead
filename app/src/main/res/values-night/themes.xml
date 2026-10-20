@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.EnglishRead" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_container</item>
+        <item name="colorOnPrimary">@color/brand_on_container</item>
+        <item name="colorPrimaryContainer">@color/brand_deep</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+        <item name="android:colorBackground">@color/page_dark</item>
+        <item name="colorSurface">@color/page_dark</item>
+        <item name="colorOnSurface">@color/text_primary_dark</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_dark</item>
+    </style>
+</resources>
