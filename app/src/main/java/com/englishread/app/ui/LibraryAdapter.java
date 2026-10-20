@@ -17,18 +17,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** 书架列表。点击进阅读器留给 M2，长按删除。 */
+/** 书架列表。点击进阅读器，长按删除。 */
 public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.VH> {
 
     public interface OnBookLongPress {
         void onLongPress(Book book);
     }
 
+    public interface OnBookClick {
+        void onClick(Book book);
+    }
+
     private final List<Book> items = new ArrayList<>();
     private final OnBookLongPress longPress;
+    private final OnBookClick click;
 
-    public LibraryAdapter(List<Book> initial, OnBookLongPress longPress) {
+    public LibraryAdapter(List<Book> initial, OnBookClick click, OnBookLongPress longPress) {
         this.items.addAll(initial);
+        this.click = click;
         this.longPress = longPress;
     }
 
@@ -66,6 +72,11 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.VH> {
             }
         }
 
+        h.itemView.setOnClickListener(v -> {
+            if (click != null) {
+                click.onClick(b);
+            }
+        });
         h.itemView.setOnLongClickListener(v -> {
             if (longPress != null) {
                 longPress.onLongPress(b);

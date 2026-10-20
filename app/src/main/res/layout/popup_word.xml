@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup"
+    android:orientation="vertical"
+    android:padding="@dimen/space_m">
+
+    <TextView
+        android:id="@+id/word"
+        style="@style/TextAppearance.EnglishRead.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="times" />
+
+    <TextView
+        android:id="@+id/phonetic"
+        style="@style/TextAppearance.EnglishRead.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="/taɪmz/" />
+
+    <TextView
+        android:id="@+id/translation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:maxLines="6"
+        android:scrollbars="vertical"
+        android:textSize="@dimen/reader_translation_text_size"
+        tools:text="n. 时代；次数\nv. 计时" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speak"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_play" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_vocab"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_add_vocab" />
+
+    </LinearLayout>
+
+</LinearLayout>

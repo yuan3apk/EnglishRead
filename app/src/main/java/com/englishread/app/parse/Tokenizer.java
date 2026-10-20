@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 /**
  * 英文分词与查词归一化。
  *
- * <p>M0 阶段只实现「取词」与「查词键」两件事，供阅读器命中测试和词典查询共用。
- * 句子切分放到 M2 的 SentenceIndex 里做，因为它要连带产出偏移表。
+ * <p>「取词」产出字符区间供阅读器命中测试用，「查词键」供词典查询用。
+ * 句子切分放到 M4 的 SentenceIndex 里做，因为它要连带产出偏移表。
  */
 public final class Tokenizer {
 
@@ -35,6 +35,37 @@ public final class Tokenizer {
             out.add(m.group().replace('\u2019', '\''));
         }
         return out;
+    }
+
+    /**
+     * 把一段的命中边界一次性算好，填进三个等长数组。
+     * 阅读器每绑一次段落算一次，点击时就只剩二分查找。
+     */
+    public static void tokenize(String text, int[] starts, int[] ends, String[] texts) {
+        if (text == null) {
+            return;
+        }
+        Matcher m = WORD.matcher(text);
+        int i = 0;
+        while (m.find() && i < starts.length) {
+            starts[i] = m.start();
+            ends[i] = m.end();
+            texts[i] = m.group().replace('\u2019', '\'');
+            i++;
+        }
+    }
+
+    /** 先数一遍词，好按精确长度分配数组。 */
+    public static int count(String text) {
+        if (text == null) {
+            return 0;
+        }
+        Matcher m = WORD.matcher(text);
+        int n = 0;
+        while (m.find()) {
+            n++;
+        }
+        return n;
     }
 
     /**

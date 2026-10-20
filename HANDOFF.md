@@ -3,7 +3,7 @@
 > 英语阅读学习 App：导入英文书 → 点词看释义 → 点「段」按钮看整段译文 → 听书。
 > 本文件是项目的唯一入口文档：现状、决策、数据模型、实施步骤、验收标准、风险。接手先读完第 0 节。
 
-最后更新：**M2 交互已定稿（段按钮方案：独立 View，不进段落文本），尚未开工**（M1 已完成：书架接真数据、TXT/EPUB2/EPUB3 导入全流程，已在 Android 16 模拟器实测三本各导入一次并核对落库行数）
+最后更新：**M2 已完成（阅读器 + 点词 + 段按钮 + 内置词典），M3 未开始**（M0/M1 此前已完成；M2 已在 Android 16 模拟器实测导入、点词、段按钮、章节切换）
 
 ---
 
@@ -32,7 +32,48 @@
 - [x] 主题 token：品牌色、米白/深色页面底色、三档文字样式、间距与阅读器排版尺寸
 - [x] 单测 `TokenizerTest`（3 例）+ 仪器测试 `PackageIdTest` 全绿
 
-### M1 已完成清单（本次）
+### M2 已完成清单（本次）
+
+- [x] `model/{Chapter,Paragraph,WordEntry}.java`：`paragraph.text` 只含原文的字段约定写进类注释
+- [x] `data/ParagraphDao.java`：章节列表、整章段落、译文回写、未译计数
+- [x] `data/DictSource.java`：`form` 反查（ran→run）→ `dict` 取释义 → 业务库 `word_cache` 兜底；assets 库先拷到 `databases/`
+- [x] `reader/ReaderHitTest.java`：纯函数，只有 `word` / `none` 两种结果，无 `gutterPx`、无 marker
+- [x] `reader/ParagraphGestures.java`：`GestureDetector` + `onTouch` 返回 false，滚动不受影响
+- [x] `reader/ReaderAdapter.java`：正文纯原文 + 独立小号「段」按钮（48dp `TouchDelegate`）+ 内联译文
+- [x] `reader/TranslationPopup.java` + `popup_word.xml`：词卡锚定词矩形，下方放不下翻到上方
+- [x] `ui/ReaderActivity.java`：单章连续滚动、上一章/下一章、点词查词、段按钮、长按
+- [x] `ui/LibraryAdapter`：补 `OnBookClick`，书架点击进阅读器；Manifest 注册 `ReaderActivity`
+- [x] `tools/build_dict.py`：ECDICT → 8 万词裁剪（10.9 MB）+ 5.6 万变形反查
+- [x] `app/src/main/assets/dict.db`：内置词典已生成并入库
+- [x] 测试：`ReaderHitTestTest`（6 例）、`TokenizerTest`（+2 例）、`ReaderDataTest`（4 例，仪器）
+
+**验收结果**：`assembleDebug` 通过；单测 16/16、仪器测试 11/11 全绿；
+模拟器实测导入样本 → 点词弹出 `It /ɪt/ pron. 它` + 朗读 + 加生词本；
+「段」按钮弹出「未配置翻译服务」（M3 才接 LLM，不假装在翻译）；
+「段」为约正文一半大小的浅灰右对齐小字，明显弱于正文、不像章节标题；
+`paragraph.text` 与入库原文逐字相同（`ReaderDataTest.paragraphTextIsStoredVerbatim` 守这条）。
+
+**M2 期间踩到并修掉的坑（后人别再踩）**：
+- `LlmClient`/`TransQueue` 不存在时，「段」按钮不能静默：现在给「未配置」提示，M3 换掉即可。
+- `DictSource` 里 `word_cache` 在**业务库** `Db`，不在 `assets/dict.db`（后者只有 `dict`/`form`）。
+  一开始写错，`no such table: word_cache` 在仪器测试里当场暴露。
+- ECDICT 的 `frq`/`bnc` 只覆盖约 5.7 万词，`well-known` 这类词的 `frq`/`bnc` 都是 0；
+  只按词频裁剪会把它们随机截掉。必须把 `tag`/`oxford`/`collins` 一起纳入排序
+  （`well-known` 靠 `tag='cet4 cet6'` 进入 8 万边界）。
+- `getOffsetForHorizontal` 返回「最近的字符边界」而不是「点到了哪个字符」：
+  点 `t` 的右半边会返回它后面那个位置，导致点在词内部也判成空白。
+  要用 `getPrimaryHorizontal(offset) > x` 往左纠正一格；空格/标点仍不命中。
+- `GestureDetector` 长按后抬手还会补一个 `onSingleTapUp`，必须用一个标志位抑制，
+  否则长按加生词本会连带弹一次词卡。
+- `RecyclerView.ViewHolder` 里的回调匿名类若改成 `static`，就访问不到外部类的
+  `listener`/`items`，要把 adapter 实例显式传进去。
+- **adb `input tap` 在模拟器上必被判为 `onLongPress`**（注入的事件时长超阈值），
+  所以用 `input tap` 测不了单击路径。单击与长按共用 `handle()`，命中计算本身已用日志验证；
+  要测单击请直接手动点，不要靠 adb 断言。
+- `adb exec-out screencap` 经 PowerShell 重定向会毁掉 PNG（老坑的另一个面孔）；
+  用 `adb shell screencap -p /sdcard/x.png` + `adb pull` 才稳。
+
+### M1 已完成清单
 
 - [x] `data/Db.java`：6 张表建表，单例，`onUpgrade` 留好递增位
 - [x] `data/BookDao.java`：整本事务入库（预编译语句批量插段落）、书架列表、**删书连带删私有目录文件**
@@ -247,18 +288,20 @@ app/src/main/java/com/englishread/app/
   ui/MainActivity.java          书架（首页）                                  ← M0/M1 已建（接真数据）
   ui/LibraryAdapter.java        书架列表项（封面/无作者收起/长按删除）         ← M0/M1 已建
   ui/ImportHelper.java          SAF 选文件 → 拷贝 → 解析入库（含失败清理）    ← M1 已建
-  ui/ReaderActivity.java        阅读器主界面（章节导航、字号、译文开关）
+  ui/ReaderActivity.java        阅读器主界面（章节切换、点词、段按钮）          ← M2 已建
   ui/VocabActivity.java         生词本
   ui/SettingsActivity.java      字号/行距/主题/翻译语言/API 配置/词典来源声明
-  reader/ReaderAdapter.java     段落列表：段落 TextView（纯原文）+ 独立「段」按钮 + 内联译文
-  reader/ReaderHitTest.java     纯函数命中测试（只判词，可单测）
-  reader/TranslationPopup.java  单词卡 PopupWindow
+  reader/ReaderAdapter.java     段落列表：段落 TextView（纯原文）+ 独立「段」按钮 + 内联译文 ← M2 已建
+  reader/ReaderHitTest.java     纯函数命中测试（只判词，可单测）                ← M2 已建
+  reader/ParagraphGestures.java 段落点击/长按识别（onTouch 返回 false）         ← M2 已建
+  reader/TranslationPopup.java  单词卡 PopupWindow                              ← M2 已建
   reader/SentenceIndex.java     段落内句子切分与偏移表（TTS 用）
-  model/{Book,Chapter,Paragraph,Token,VocabEntry}.java  ← Book 已建
+  model/{Book,Chapter,Paragraph,WordEntry,Token,VocabEntry}.java  ← Book/Chapter/Paragraph/WordEntry 已建
   data/Db.java                  建表 + 版本迁移                                 ← M1 已建
   data/BookDao.java             整本事务入库 / 列表 / 删书连带删文件             ← M1 已建
-  data/{ParagraphDao,VocabDao,ReadingPosDao}.java
-  data/DictSource.java          assets/dict.db 查询 + form→lemma + word_cache
+  data/ParagraphDao.java        章节列表 / 整章段落 / 译文回写                   ← M2 已建
+  data/{VocabDao,ReadingPosDao}.java
+  data/DictSource.java          assets/dict.db 查询 + form→lemma + word_cache   ← M2 已建
   parse/BookParser.java         按格式分派                                       ← M1 已建
   parse/ParsedBook.java         解析中间结构（纯 Java）                           ← M1 已建
   parse/TxtParser.java          编码探测(BOM→UTF-8→GB18030) + 切章 + 空行切段     ← M1 已建
@@ -270,8 +313,8 @@ app/src/main/java/com/englishread/app/
   tts/TtsController.java        句队列、高亮、语速、状态机
   tts/TtsService.java           前台服务 + 媒体通知
 
-app/src/main/assets/dict.db     内置词典（由 tools/build_dict.py 生成）           ← 未建（M2）
-tools/build_dict.py             ECDICT CSV → 裁剪 → dict.db                      ← 未建（M2）
+app/src/main/assets/dict.db     内置词典（由 tools/build_dict.py 生成）           ← M2 已建
+tools/build_dict.py             ECDICT → 裁剪 → dict.db（8 万词 / 10.9 MB）      ← M2 已建
 samples/{sample.txt,sample_epub2.epub,sample_epub3.epub}  导入验收样本            ← M1 已建
 ```
 
@@ -334,27 +377,13 @@ Pattern WORD = Pattern.compile("[A-Za-z]+(?:['\u2019\\-][A-Za-z]+)*");
 - `sourceSets` 里给 androidTest 加 assets，相对路径 `../../samples` 解析不到（merge 出空目录）；用 `rootProject.file("samples")`。
 - `adb shell cat` 拉二进制文件会被 CRLF 破坏，`adb exec-out` 又会被 PowerShell 写成 UTF-16；最稳的是先 `run-as ... > /data/local/tmp/x`，再 `cp` 到 `/sdcard`，最后 `adb pull`。
 
-### M2 阅读器 + 点词 + 段按钮（3–4 天）
-
-1. `ReaderActivity`：单章 RecyclerView（章节切换走顶栏 + 章节列表抽屉），字号/行距/日夜主题。
-2. `ReaderAdapter`：段落 `TextView` 只放原文；`item_paragraph.xml` 里在它下方放一个
-   `GONE`→按需可见的小号「段」按钮与译文 `TextView`。**按钮不进 `text`**。
-3. `ReaderHitTest`（只判词）+ `TranslationPopup` + 长按入生词本。
-4. `tools/build_dict.py`：下载 ECDICT `stardict.csv` → 按 `frq`/`bnc` 排序裁剪 **6–10 万词**
-   → 建 `dict` 表 + 从 `exchange` 字段（`p:ran/d:done/i:running/3:runs`）生成 `form` 反查表。
-5. `DictSource`：先拷 `assets/dict.db` 到 `databases/`（assets 里的库不能直接写，拷一份更稳）。
-
-**验收**：随机点 20 个词（含 `ran`/`better`/`don't`/`well-known` 这类变形和缩写）释义正确；
-**每段正文下方都有小号「段」按钮，视觉上明显弱于正文、完全不像章节标题**，点它展开译文、再点收起；
-点词间空白/行尾空白**什么都不发生**；**`paragraph.text` 与库中原文逐字相同**（不含「段」）；
-`ReaderHitTestTest`（纯数学，喂假 layout 数据）通过。
-
 ### M3 段落翻译（2–3 天）
 
 1. `LlmClient`：`base_url` + `key` + `model` 三件套可在设置页配；`HttpURLConnection` + `org.json`；
    超时 20s、失败重试 1 次、可取消。
 2. `TransQueue`：批量 3–5 段、命中缓存即返回、写回 `paragraph`。
 3. 段落下方内联译文（默认折叠，**点「段」按钮展开**；设置里可整体隐藏该按钮）。
+   M2 的 `ReaderActivity.onTranslateToggle` 现在只弹「未配置」，这里替换成真实队列。
 4. 设置页明示：**段落文本会发送到所配置的第三方服务**（隐私政策必写）。
 
 **验收**：断网 → 点「段」字出「未配置/失败 + 重试」而非崩溃；
@@ -395,9 +424,9 @@ Pattern WORD = Pattern.compile("[A-Za-z]+(?:['\u2019\\-][A-Za-z]+)*");
 ```powershell
 $env:JAVA_HOME = 'C:\Users\y\.jdks\corretto-17-jdk'   # 必须：本机默认 java 是 JDK 24
 .\gradlew.bat :app:assembleDebug                      # 首次联网，之后可加 --offline
-.\gradlew.bat :app:testDebugUnitTest                  # Tokenizer / TxtParser 单测（8 例）
+.\gradlew.bat :app:testDebugUnitTest                  # ReaderHitTest / Tokenizer / TxtParser（16 例）
 .\gradlew.bat :app:installDebug
-.\gradlew.bat :app:connectedDebugAndroidTest           # 需先起模拟器（7 例：解析 3 + DAO 3 + 包名 1）
+.\gradlew.bat :app:connectedDebugAndroidTest           # 需先起模拟器（11 例：阅读器数据 4 + 解析 3 + DAO 3 + 包名 1）
 
 # 起模拟器（后台）
 & "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -avd Pixel_9_Pro -no-audio -gpu swiftshader_indirect
@@ -459,10 +488,12 @@ $env:JAVA_HOME = 'C:\Users\y\.jdks\corretto-17-jdk'   # 必须：本机默认 ja
 1. 设 `JAVA_HOME=C:\Users\y\.jdks\corretto-17-jdk`，跑通 `.\gradlew.bat :app:assembleDebug`（基线是绿的）。
 2. 样本已就位：`samples/sample.txt`、`samples/sample_epub2.epub`、`samples/sample_epub3.epub`。
    它们通过 `sourceSets` 注入 androidTest 的 assets，**不会**被打进 APK。
-3. **直接从 M2 开始**——M0 骨架与 M1 的导入/解析/入库都已就位，不要再动包名。
-   M2 的翻译入口已定稿为**段落下方的独立小号「段」按钮**（不进 `paragraph.text`），见第 2.1 节与 D1，
-   别按旧的「点行尾留白」或「把段字拼进 Spannable」实现。
-4. 进 M2 之前先定稿 `ReaderHitTest` 的单测——这个函数决定整个阅读体验。
+3. **直接从 M3 开始**——M0/M1/M2 都已就位，不要再动包名，也不要改「段按钮是独立 View」这个决策。
+   M3 的接入点是 `ReaderActivity.onTranslateToggle`：现在它只弹「未配置」，换成 `TransQueue` 即可；
+   `ParagraphDao.saveTranslation` 与 `Paragraph.STATUS_*` 已经是译文回写要用的全部接口。
+4. 词典已内置：`app/src/main/assets/dict.db`（8 万词 / 5.6 万变形 / 10.9 MB）。
+   要重新生成：`python tools/build_dict.py <ecdict-sqlite 解出的 stardict.db> app/src/main/assets/dict.db`。
+5. adb `input tap` 在模拟器上必被判成长按，**测不了单击路径**；测点词请手动点，或看 `ReaderDataTest`。
 
-**当前代码状态：M0、M1 已完成，M2 未开始。** 书架已接真数据（`MainActivity.reload()` → `BookDao.listAll()`），
-`LibraryAdapter` 的点击进阅读器还没接——`ReaderActivity` 尚不存在。
+**当前代码状态：M0、M1、M2 已完成，M3 未开始。** 书架点击已接进阅读器，
+阅读器能读段落、点词查本地词典、点「段」给「未配置」提示；段落译文的生成（LLM）还没有。

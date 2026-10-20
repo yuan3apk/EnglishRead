@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 一段。正文 TextView 的 text 永远是纯原文；「段」按钮是兄弟 View，不是字符串。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/para_text"
+        style="@style/TextAppearance.EnglishRead.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/reader_side_margin"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textIsSelectable="false"
+        tools:text="It was the best of times, it was the worst of times." />
+
+    <!-- 11sp + 次要色 + 右对齐：小到像装订标记，不像章节标题。
+         48dp 触摸区靠 ReaderAdapter 里的 TouchDelegate 撑出来，视觉尺寸不变。 -->
+    <TextView
+        android:id="@+id/btn_translate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/reader_side_margin"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:paddingHorizontal="@dimen/space_s"
+        android:paddingVertical="2dp"
+        android:text="@string/reader_para_marker"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
+        android:contentDescription="@string/reader_translate_paragraph"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- 内联译文，默认收起；同一段只请求一次，之后只是显隐 -->
+    <TextView
+        android:id="@+id/para_trans"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/reader_side_margin"
+        android:layout_marginTop="@dimen/space_xs"
+        android:background="?attr/colorSurfaceVariant"
+        android:lineSpacingMultiplier="1.4"
+        android:padding="@dimen/space_s"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/reader_translation_text_size"
+        android:visibility="gone"
+        tools:text="这是最好的时代，这是最坏的时代。"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/para_retry"
+        style="@style/TextAppearance.EnglishRead.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/reader_side_margin"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="@string/reader_translate_failed"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

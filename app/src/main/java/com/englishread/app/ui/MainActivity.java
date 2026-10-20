@@ -1,5 +1,6 @@
 package com.englishread.app.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         empty = findViewById(R.id.empty);
         list = findViewById(R.id.book_list);
 
-        adapter = new LibraryAdapter(new ArrayList<>(), this::confirmDelete);
+        adapter = new LibraryAdapter(new ArrayList<>(), this::openBook, this::confirmDelete);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
 
@@ -99,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
                 list.setVisibility(none ? View.GONE : View.VISIBLE);
             });
         });
+    }
+
+    private void openBook(Book book) {
+        startActivity(new Intent(this, ReaderActivity.class)
+                .putExtra(ReaderActivity.EXTRA_BOOK_ID, book.id));
     }
 
     private void confirmDelete(Book book) {

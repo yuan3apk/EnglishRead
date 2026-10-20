@@ -9,6 +9,10 @@
     <string name="library_import_failed">导入失败：%1$s</string>
 
     <!-- 阅读器 -->
+    <string name="reader_para_marker">段</string>
+    <string name="reader_prev_chapter">上一章</string>
+    <string name="reader_next_chapter">下一章</string>
+    <string name="word_not_found">词典里没有这个词</string>
     <string name="reader_translate_paragraph">翻译本段</string>
     <string name="reader_translating">翻译中…</string>
     <string name="reader_translate_failed">翻译失败，点击重试</string>
