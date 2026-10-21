@@ -15,22 +15,29 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="?attr/colorSurface"
+        android:background="@color/card_surface"
         android:elevation="16dp"
         android:orientation="vertical">
 
         <TextView
-            style="@style/TextAppearance.EnglishRead.Title"
+            style="@style/TextAppearance.EnglishRead.ToolbarTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/space_m"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/space_m"
             android:text="@string/reader_toc" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/outline_soft" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/toc_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:paddingTop="@dimen/space_xs"
             android:paddingBottom="@dimen/space_l"
             android:scrollbars="vertical" />
 

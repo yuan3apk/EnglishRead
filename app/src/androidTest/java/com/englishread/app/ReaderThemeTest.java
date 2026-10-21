@@ -17,6 +17,7 @@ import com.englishread.app.model.Book;
 import com.englishread.app.parse.ParsedBook;
 import com.englishread.app.reader.ReaderPrefs;
 import com.englishread.app.ui.ReaderActivity;
+import com.englishread.app.ui.UiTheme;
 
 import org.junit.After;
 import org.junit.Before;
@@ -61,6 +62,7 @@ public class ReaderThemeTest {
     @After
     public void tearDown() {
         prefs.setDark(null);
+        UiTheme.set(ctx, UiTheme.FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_UNSPECIFIED);
         cleanUp();
     }
@@ -83,17 +85,40 @@ public class ReaderThemeTest {
         assertReaderGets(Configuration.UI_MODE_NIGHT_NO, Boolean.FALSE);
     }
 
+    /**
+     * 界面主题设成深色时，浅色的阅读器**仍然是浅色**。
+     *
+     * <p>这是「两套主题互不影响」的反方向：全局走 default、阅读器走 local，
+     * 反过来的组合最容易写错——比如把读者的开关也接到 setDefaultNightMode 上。
+     */
+    @Test
+    public void appDarkThemeDoesNotDarkenLightReader() {
+        UiTheme.set(ctx, UiTheme.DARK);
+        assertReaderGets(Configuration.UI_MODE_NIGHT_NO, Boolean.FALSE);
+    }
+
+    @Test
+    public void appLightThemeDoesNotBrightenDarkReader() {
+        UiTheme.set(ctx, UiTheme.LIGHT);
+        assertReaderGets(Configuration.UI_MODE_NIGHT_YES, Boolean.TRUE);
+    }
+
     /** @param expectedNightMode 期望阅读器看到的 uiMode（YES/NO） */
     private void assertReaderGets(int expectedNightMode, Boolean dark) {
         prefs.setDark(dark);
+
+        // 现在全局主题（书架/生词本/设置）也走 setDefaultNightMode，启动时会被 App 设成
+        // FOLLOW_SYSTEM，所以不能再断言「一定是 UNSPECIFIED」。真正的不变量是：
+        // **打开阅读器这件事本身不许改进程级夜间模式**——一改书架就会跟着重建变黑。
+        int before = AppCompatDelegate.getDefaultNightMode();
 
         Intent i = new Intent(ctx, ReaderActivity.class)
                 .putExtra(ReaderActivity.EXTRA_BOOK_ID, bookId)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try (ActivityScenario<ReaderActivity> scenario = ActivityScenario.launch(i)) {
-            assertEquals("阅读器不该改全局夜间模式，否则书架会跟着变",
-                    AppCompatDelegate.MODE_NIGHT_UNSPECIFIED,
+            assertEquals("阅读器不该改进程级夜间模式，否则书架会跟着变",
+                    before,
                     AppCompatDelegate.getDefaultNightMode());
 
             scenario.onActivity(a -> assertEquals("阅读器自己的 uiMode 应已是目标明暗",

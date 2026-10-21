@@ -1,36 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 书架一行：封面 + 书名 + 作者 + 阅读进度。
+     封面用 FrameLayout 撑圆角（clipToOutline 靠 background 的圆角轮廓裁子 View），
+     没封面时露出底下的小书水印，不会是一块平的灰。 -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.EnglishRead.BookCard"
+    style="@style/Widget.EnglishRead.Card.Clickable"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="@dimen/space_m">
 
-        <ImageView
-            android:id="@+id/cover"
+        <FrameLayout
             android:layout_width="@dimen/book_cover_width"
             android:layout_height="@dimen/book_cover_height"
-            android:background="@color/surface_variant"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop" />
+            android:background="@drawable/bg_cover_placeholder"
+            android:clipToOutline="true">
+
+            <ImageView
+                android:id="@+id/cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/space_m"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title"
-                style="@style/TextAppearance.EnglishRead.Title"
+                style="@style/TextAppearance.EnglishRead.BookTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -42,21 +52,44 @@
                 style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
+                android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 tools:text="Jane Austen" />
 
-            <TextView
-                android:id="@+id/progress"
-                style="@style/TextAppearance.EnglishRead.Caption"
-                android:layout_width="wrap_content"
+            <!-- 进度：细条 + 百分比。原先只有一行「0%」，看不出读了多远 -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_s"
-                tools:text="12%" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progress_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    app:indicatorColor="?attr/colorPrimary"
+                    app:trackColor="?attr/colorSurfaceVariant"
+                    app:trackCornerRadius="2dp"
+                    app:trackThickness="4dp"
+                    tools:progress="35" />
+
+                <TextView
+                    android:id="@+id/progress"
+                    style="@style/TextAppearance.EnglishRead.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:minWidth="34dp"
+                    android:gravity="end"
+                    tools:text="35%" />
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

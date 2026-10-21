@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- M3 段落翻译要打 LLM 接口。普通权限，安装即授予，运行时不用申请。
+         单词释义仍走本地词典，断网只影响段落翻译。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- M4 听书：朗读书时靠前台服务活下来，锁屏/后台才控得住。
+         Android 14 起前台服务必须声明具体类型，mediaPlayback 需要这条专属权限。 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!-- Android 13+ 通知要运行时授权；没给也能念，只是锁屏控制看不见 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Android 11+ 包可见性：不声明这一段，应用进程里 queryIntentServices(TTS_SERVICE)
+         返回空、bindService 也会被拦，TextToSpeech 直接回调 onInit(-1)。
+         实测（OPPO PJW110 / Android 16）：未声明时 queryIntentServices=0、
+         默认引擎 com.oplus.ttsaccessibilityengine 初始化立刻 ERROR；声明后恢复。 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -25,6 +46,37 @@
             android:name=".ui.ReaderActivity"
             android:exported="false"
             android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings_title"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- 设置首页的两个入口，各自独立一页 -->
+        <activity
+            android:name=".ui.TranslationSettingsActivity"
+            android:exported="false"
+            android:label="@string/settings_translation_page"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.ThemeSettingsActivity"
+            android:exported="false"
+            android:label="@string/settings_theme_page"
+            android:parentActivityName=".ui.SettingsActivity" />
+
+        <activity
+            android:name=".ui.VocabActivity"
+            android:exported="false"
+            android:label="@string/vocab_title"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <service
+            android:name=".tts.TtsService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
 </manifest>

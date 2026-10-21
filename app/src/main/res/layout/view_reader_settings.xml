@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 阅读设置面板：字号、行距、段距、字距、缩进、主题、亮度、段按钮开关。
-     整块可滚动：窄屏上不至于把最后一行裁掉。 -->
+<!-- 阅读设置面板：字号、行距、段距、字距、缩进、语速、主题、段按钮开关、亮度、翻译服务。
+     分三组（排版 / 听书 / 显示），组与组之间一条 1dp 分割线；整块可滚动，窄屏不裁最后一行。
+
+     每一行都是同一个骨架：标签（占满）→ 当前值（品牌色）→ − / +（40dp 圆形）。
+     加档位只加行，别改结构。 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,57 +15,51 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/space_m"
         android:paddingTop="@dimen/space_s"
-        android:paddingBottom="@dimen/space_s">
+        android:paddingBottom="@dimen/space_m">
 
-        <!-- 字号：A− / 当前值 / A+ -->
+        <TextView
+            style="@style/TextAppearance.EnglishRead.Section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/reader_section_type" />
+
+        <!-- 字号 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_text_size" />
+                android:text="@string/reader_text_size"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_text_size"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_font_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_text_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="A−"
-                android:textSize="14sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_font_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_text_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="A+"
-                android:textSize="14sp" />
+                android:text="+" />
 
         </LinearLayout>
 
@@ -75,47 +72,33 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_line_spacing" />
+                android:text="@string/reader_line_spacing"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_line_spacing"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_spacing_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_line_spacing_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="−"
-                android:textSize="16sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_spacing_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_line_spacing_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="+"
-                android:textSize="16sp" />
+                android:text="+" />
 
         </LinearLayout>
 
@@ -128,47 +111,33 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_para_spacing" />
+                android:text="@string/reader_para_spacing"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_para_spacing"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_para_spacing_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_para_spacing_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="−"
-                android:textSize="16sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_para_spacing_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_para_spacing_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="+"
-                android:textSize="16sp" />
+                android:text="+" />
 
         </LinearLayout>
 
@@ -181,47 +150,33 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_letter_spacing" />
+                android:text="@string/reader_letter_spacing"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_letter_spacing"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_letter_spacing_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_letter_spacing_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="−"
-                android:textSize="16sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_letter_spacing_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_letter_spacing_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="+"
-                android:textSize="16sp" />
+                android:text="+" />
 
         </LinearLayout>
 
@@ -234,53 +189,45 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_indent" />
+                android:text="@string/reader_indent"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_indent"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_indent_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_indent_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="−"
-                android:textSize="16sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_indent_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_indent_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="+"
-                android:textSize="16sp" />
+                android:text="+" />
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_m"
+            android:background="@color/outline_soft" />
+
         <!-- 听书：语速档位 + 「点正文暂停」开关 -->
         <TextView
-            style="@style/TextAppearance.EnglishRead.Caption"
+            style="@style/TextAppearance.EnglishRead.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_m"
@@ -289,52 +236,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginTop="@dimen/space_s"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reader_speech_rate" />
+                android:text="@string/reader_speech_rate"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/label_speech_rate"
+                style="@style/TextAppearance.EnglishRead.Value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_s"
                 android:gravity="end"
-                android:minWidth="56dp"
-                android:textSize="14sp" />
+                android:minWidth="56dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_rate_smaller"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:contentDescription="@string/reader_speech_rate_smaller"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="−"
-                android:textSize="16sp" />
+                android:text="−" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_rate_larger"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="56dp"
-                android:layout_height="44dp"
+                style="@style/Widget.EnglishRead.StepButton"
                 android:layout_marginStart="@dimen/space_s"
                 android:contentDescription="@string/reader_speech_rate_larger"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
-                android:text="+"
-                android:textSize="16sp" />
+                android:text="+" />
 
         </LinearLayout>
 
@@ -342,13 +275,19 @@
             android:id="@+id/switch_tap_pause"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginTop="@dimen/space_s"
             android:text="@string/reader_tap_to_pause"
             android:textSize="14sp" />
 
-        <!-- 主题 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_m"
+            android:background="@color/outline_soft" />
+
+        <!-- 显示：主题 / 段按钮 / 亮度 / 翻译服务 -->
         <TextView
-            style="@style/TextAppearance.EnglishRead.Caption"
+            style="@style/TextAppearance.EnglishRead.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_m"
@@ -358,36 +297,33 @@
             android:id="@+id/theme_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginTop="@dimen/space_s"
             app:selectionRequired="true"
             app:singleSelection="true">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/theme_system"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.EnglishRead.Segment"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:text="@string/reader_theme_system"
-                android:textSize="13sp" />
+                android:text="@string/reader_theme_system" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/theme_light"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.EnglishRead.Segment"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:text="@string/reader_theme_light"
-                android:textSize="13sp" />
+                android:text="@string/reader_theme_light" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/theme_dark"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.EnglishRead.Segment"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:text="@string/reader_theme_dark"
-                android:textSize="13sp" />
+                android:text="@string/reader_theme_dark" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -405,14 +341,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xs"
-            android:text="@string/reader_brightness" />
+            android:gravity="start|center_vertical"
+            android:text="@string/reader_brightness"
+            app:icon="@drawable/ic_brightness"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/space_s"
+            app:iconTint="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_api_settings"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_open" />
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_open"
+            app:icon="@drawable/ic_translate"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/space_s"
+            app:iconTint="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 

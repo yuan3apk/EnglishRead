@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 书架首页。
+     层次：工具栏（标题 + 生词本/设置）→ 书卡列表 → 右下角导入。
+     空态是一块居中的插画，不是一行居中的灰字——书架空着的时候整个页面只剩这句话。 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     tools:context=".ui.MainActivity">
 
     <!-- MaterialToolbar 只认 app:title，android:title 不会显示 -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.EnglishRead.Toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/app_name" />
+        app:title="@string/library_title" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/book_list"
@@ -29,19 +34,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/empty"
-        style="@style/TextAppearance.EnglishRead.Body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/space_l"
-        android:gravity="center"
-        android:text="@string/library_empty"
+        android:layout_marginHorizontal="@dimen/space_xl"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.38">
+
+        <ImageView
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_empty_shelf" />
+
+        <TextView
+            style="@style/TextAppearance.EnglishRead.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/library_empty_title" />
+
+        <TextView
+            style="@style/TextAppearance.EnglishRead.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.4"
+            android:text="@string/library_empty_body" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_import"
@@ -49,7 +76,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/space_l"
         android:text="@string/action_import"
-        app:icon="@android:drawable/ic_input_add"
+        android:textColor="?attr/colorOnPrimary"
+        app:backgroundTint="?attr/colorPrimary"
+        app:icon="@drawable/ic_add"
+        app:iconTint="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

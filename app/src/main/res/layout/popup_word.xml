@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 词卡：词（衬线）+ 音标（品牌色）+ 释义 + 两个动作。
+     分隔线把「这是什么词」和「能对它做什么」分开。 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="280dp"
+    android:layout_width="292dp"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_popup"
     android:orientation="vertical"
@@ -9,7 +11,7 @@
 
     <TextView
         android:id="@+id/word"
-        style="@style/TextAppearance.EnglishRead.Title"
+        style="@style/TextAppearance.EnglishRead.WordTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="times" />
@@ -19,6 +21,8 @@
         style="@style/TextAppearance.EnglishRead.Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="?attr/colorPrimary"
         tools:text="/taɪmz/" />
 
     <TextView
@@ -26,15 +30,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_s"
+        android:lineSpacingMultiplier="1.35"
         android:maxLines="6"
         android:scrollbars="vertical"
         android:textSize="@dimen/reader_translation_text_size"
         tools:text="n. 时代；次数\nv. 计时" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/space_m"
+        android:background="@color/outline_soft" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_s"
+        android:layout_marginTop="@dimen/space_xs"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -47,9 +58,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_vocab"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
             android:text="@string/action_add_vocab" />
 
     </LinearLayout>

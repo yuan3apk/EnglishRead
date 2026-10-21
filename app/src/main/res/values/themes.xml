@@ -5,28 +5,212 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/brand_container</item>
         <item name="colorOnPrimaryContainer">@color/brand_on_container</item>
+        <!-- 选中态（主题页的三档按钮、厂商模板 chip、面板里的 ± 按钮）默认取 secondaryContainer，
+             不覆盖就会用 Material3 未改过的紫色调色板，跟品牌青完全两回事。 -->
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/brand_container</item>
+        <item name="colorOnSecondaryContainer">@color/brand_on_container</item>
+        <!-- 单选/开关/滑杆的「已选中」颜色取的就是 secondary，所以上面那条也顺手修了弹窗里的单选点。
+             下面这五个 surfaceContainer 是对话框 / 菜单 / 卡的默认底色，不覆盖的话弹窗是一片
+             带绿的灰（Material3 默认色），和米白页面拼在一起很脏。 -->
+        <item name="colorSurfaceContainerLowest">@color/card_surface</item>
+        <item name="colorSurfaceContainerLow">@color/card_surface</item>
+        <item name="colorSurfaceContainer">@color/card_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/card_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_variant</item>
         <item name="android:colorBackground">@color/page_light</item>
         <item name="colorSurface">@color/page_light</item>
+        <!-- 输入框/内联译文/占位封面的灰面 -->
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
         <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <!-- 描边与分割线：暖灰，别用 Material3 默认的中性黑，压在米白上会脏 -->
+        <item name="colorOutline">@color/outline_soft</item>
+        <item name="colorOutlineVariant">@color/outline_soft</item>
+        <!-- 对话框底色：Material 1.10 的弹窗会自己取一个带绿的灰（surfaceContainerHigh 那套），
+             压在米白页面上很脏。这里显式接管，弹窗就是纸白。 -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.EnglishRead.Dialog</item>
+    </style>
+
+    <!-- ThemeOverlay 会覆盖掉「容器面」那几个 token（它本来就是干这个的），
+         只写 backgroundTint 不够——要把容器面色一起钉回纸白，弹窗才会真的白。
+         night 下 @color/card_surface 自动是深色值，不用另写一份。 -->
+    <style name="ThemeOverlay.EnglishRead.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="backgroundTint">@color/card_surface</item>
+        <item name="colorSurface">@color/card_surface</item>
+        <item name="colorSurfaceContainerLowest">@color/card_surface</item>
+        <item name="colorSurfaceContainerLow">@color/card_surface</item>
+        <item name="colorSurfaceContainer">@color/card_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/card_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_variant</item>
+        <!-- Material 1.10 的弹窗底还把「海拔染色」叠在底色上（纸白被染成淡薄荷 #E8EEEA）。
+             关掉 elevation overlay 才是干净的纸白；直接换 window background 会导致
+             标题/正文/按钮三段各画自己的圆角，反而像三层卡片叠在一起。 -->
+        <item name="elevationOverlayEnabled">false</item>
     </style>
 
     <style name="Theme.EnglishRead" parent="Base.Theme.EnglishRead" />
 
     <!-- 排版：标题/正文/说明三档，别再加第四档 -->
-    <style name="TextAppearance.EnglishRead.Title" parent="TextAppearance.Material3.TitleMedium" />
+    <style name="TextAppearance.EnglishRead.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:letterSpacing">0</item>
+    </style>
 
     <style name="TextAppearance.EnglishRead.Body" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:lineSpacingMultiplier">@dimen/reader_line_spacing_mult</item>
     </style>
 
+    <!-- 阅读正文：衬线，行距再松一点。
+         **必须用 android:textAppearance 引用，不能写 style=**：textAppearance 是在
+         视图属性之后才套用的，写 style 的话字体被主题那套无衬线盖掉（实测正文一直是 Roboto）。 -->
+    <style name="TextAppearance.EnglishRead.ReadBody" parent="TextAppearance.EnglishRead.Body">
+        <item name="android:fontFamily">serif</item>
+    </style>
+
     <style name="TextAppearance.EnglishRead.Caption" parent="TextAppearance.Material3.BodySmall" />
 
-    <style name="Widget.EnglishRead.BookCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">12dp</item>
+    <!-- 英文内容走衬线（书的正文、书名、生词），中文界面文案走系统无衬线：
+         这套 App 的主体是英文，衬线才像「书」。 -->
+    <style name="TextAppearance.EnglishRead.BookTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.EnglishRead.WordTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- 引文：生词命中处的原句、词卡里的例句 -->
+    <style name="TextAppearance.EnglishRead.Quote" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:lineSpacingMultiplier">1.35</item>
+    </style>
+
+    <!-- 分组小标题（「听书」「显示」这种），全大写式的窄字距 -->
+    <style name="TextAppearance.EnglishRead.Section" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- 设置行右侧的当前值：品牌色，比正文小，一眼能扫到 -->
+    <style name="TextAppearance.EnglishRead.Value" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- 卡片：纸白底 + 1dp 暖灰描边，不堆阴影。
+         之前用 Filled 卡片取到 colorSurfaceContainerHighest（未改过的紫色调色板），
+         压在米白上发紫，所以底色一律显式给。 -->
+    <style name="Widget.EnglishRead.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/card_surface</item>
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/outline_soft</item>
         <item name="android:layout_marginHorizontal">@dimen/space_m</item>
         <item name="android:layout_marginBottom">@dimen/space_s</item>
+    </style>
+
+    <!-- 整张卡可点（书架的一本书、设置的一个入口）：卡片比一行字好按 -->
+    <style name="Widget.EnglishRead.Card.Clickable" parent="Widget.EnglishRead.Card">
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
+    </style>
+
+    <!-- 面板里的 ± 步进按钮：圆形、品牌浅底，比 56dp 的方框按钮安静 -->
+    <style name="Widget.EnglishRead.StepButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">@dimen/step_button</item>
+        <item name="android:layout_height">@dimen/step_button</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingHorizontal">0dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="iconPadding">0dp</item>
+    </style>
+
+    <!-- 阅读器底部五个入口：图标在上、11sp 文字在下，等分一行 -->
+    <style name="Widget.EnglishRead.BarButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingHorizontal">2dp</item>
+        <item name="android:paddingVertical">6dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="iconGravity">top</item>
+        <item name="iconPadding">2dp</item>
+        <item name="iconSize">22dp</item>
+        <item name="iconTint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- 输入框：12dp 圆角 + 纸白底，和卡片同一套观感 -->
+    <style name="Widget.EnglishRead.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxBackgroundColor">@color/card_surface</item>
+        <item name="android:layout_marginTop">@dimen/space_s</item>
+    </style>
+
+    <!-- 三档单选（主题、翻页这类）：等宽分段按钮 -->
+    <style name="Widget.EnglishRead.Segment" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textSize">13sp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingHorizontal">4dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeColor">@color/outline_soft</item>
+    </style>
+
+    <!-- 图标底：40dp 的圆角方块，里面一颗 20dp 的单色图标 -->
+    <!-- parent="" 是必须的：不写会被当成隐式父样式 Widget.EnglishRead，aapt 直接报 not found -->
+    <style name="Widget.EnglishRead.IconBadge" parent="">
+        <item name="android:layout_width">@dimen/icon_badge</item>
+        <item name="android:layout_height">@dimen/icon_badge</item>
+        <item name="android:background">@drawable/bg_icon_badge</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">?attr/colorPrimary</item>
+    </style>
+
+    <!-- 标签：书名、状态这类小胶囊 -->
+    <style name="Widget.EnglishRead.Tag" parent="">
+        <item name="android:background">@drawable/bg_tag</item>
+        <item name="android:paddingHorizontal">@dimen/space_s</item>
+        <item name="android:paddingVertical">2dp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- 工具栏：透明底（页面色透出来）+ 衬线标题 + 统一返回箭头 -->
+    <style name="Widget.EnglishRead.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="titleTextAppearance">@style/TextAppearance.EnglishRead.ToolbarTitle</item>
+        <item name="navigationIconTint">?attr/colorOnSurface</item>
+        <item name="android:paddingStart">@dimen/space_s</item>
+        <item name="android:paddingEnd">@dimen/space_s</item>
+    </style>
+
+    <style name="TextAppearance.EnglishRead.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 </resources>

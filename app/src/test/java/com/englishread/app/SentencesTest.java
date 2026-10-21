@@ -58,6 +58,54 @@ public class SentencesTest {
     }
 
     @Test
+    public void doesNotSplitAfterTitles() {
+        List<String> s = Sentences.split("Mr. Smith met Mrs. Jones. Dr. Who was late. Prof. X left.");
+        assertEquals(3, s.size());
+        assertEquals("Mr. Smith met Mrs. Jones.", s.get(0));
+        assertEquals("Dr. Who was late.", s.get(1));
+    }
+
+    @Test
+    public void doesNotSplitAfterDottedInitialism() {
+        List<String> s = Sentences.split("He lives in the U.S. now. See e.g. chapter one, i.e. the start.");
+        assertEquals(2, s.size());
+        assertEquals("He lives in the U.S. now.", s.get(0));
+    }
+
+    @Test
+    public void doesNotSplitAfterNumberedAbbreviation() {
+        List<String> s = Sentences.split("See Fig. 3 and No. 12 on p. 40. Then stop.");
+        assertEquals(2, s.size());
+        assertEquals("See Fig. 3 and No. 12 on p. 40.", s.get(0));
+    }
+
+    @Test
+    public void doesNotSplitAfterNameInitials() {
+        // J. K. Rowling 是一串单字母缩写，不该被拆成多段
+        List<String> s = Sentences.split("J. K. Rowling wrote it. She is famous.");
+        assertEquals(2, s.size());
+        assertEquals("J. K. Rowling wrote it.", s.get(0));
+    }
+
+    @Test
+    public void stillSplitsWhenAbbreviationLikeWordEndsSentence() {
+        // no 只有首字母大写才当编号缩写，小写 no 后面就是句末
+        List<String> s = Sentences.split("He said no. Then he left.");
+        assertEquals(2, s.size());
+        assertEquals("He said no.", s.get(0));
+        // I. 不算缩写
+        assertEquals(2, Sentences.split("It was I. Then everything changed.").size());
+    }
+
+    @Test
+    public void keepsClosingQuoteWithItsSentence() {
+        List<String> s = Sentences.split("He said \"Go.\" Then he ran.");
+        assertEquals(2, s.size());
+        assertEquals("He said \"Go.\"", s.get(0));
+        assertEquals("Then he ran.", s.get(1));
+    }
+
+    @Test
     public void splitBookTurnsEveryParagraphIntoSentences() {
         ParsedBook pb = ParsedBook.of("txt");
         ParsedBook.Chapter ch = new ParsedBook.Chapter("One", "one.xhtml");

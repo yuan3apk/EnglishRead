@@ -5,9 +5,17 @@
     <dimen name="space_s">8dp</dimen>
     <dimen name="space_m">16dp</dimen>
     <dimen name="space_l">24dp</dimen>
+    <dimen name="space_xl">32dp</dimen>
 
-    <dimen name="book_cover_width">48dp</dimen>
-    <dimen name="book_cover_height">64dp</dimen>
+    <!-- 书架封面 3:4，够认得出是哪本书，又不至于一行只放一本 -->
+    <dimen name="book_cover_width">56dp</dimen>
+    <dimen name="book_cover_height">76dp</dimen>
+    <dimen name="cover_radius">10dp</dimen>
+
+    <dimen name="card_radius">18dp</dimen>
+    <!-- 卡片左侧那颗图标底座 -->
+    <dimen name="icon_badge">40dp</dimen>
+    <dimen name="step_button">40dp</dimen>
 
     <!-- 阅读器排版：默认值，设置页可覆盖 -->
     <dimen name="reader_text_size">18sp</dimen>

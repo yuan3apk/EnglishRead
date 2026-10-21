@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# 发布签名：私钥与口令绝不进版本库。仓库里没有它们，`assembleRelease` 也照样能跑（出未签名包）。
+/release.keystore
+/keystore.properties

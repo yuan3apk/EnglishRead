@@ -36,8 +36,10 @@ import com.englishread.app.data.Db;
 import com.englishread.app.data.DictSource;
 import com.englishread.app.data.ParagraphDao;
 import com.englishread.app.data.ReadingPosDao;
+import com.englishread.app.data.VocabDao;
 import com.englishread.app.model.Chapter;
 import com.englishread.app.model.Paragraph;
+import com.englishread.app.model.VocabEntry;
 import com.englishread.app.model.WordEntry;
 import com.englishread.app.parse.Tokenizer;
 import com.englishread.app.reader.ReaderAdapter;
@@ -77,6 +79,9 @@ public class ReaderActivity extends AppCompatActivity
     private ReaderPrefs prefs;
     private ApiConfig api;
     private TransQueue trans;
+    /** 词卡对应的段与词：卡片上的「加生词本」要把语境一起存下来。 */
+    private Paragraph cardPara;
+    private String cardWord;
 
     private View topBar;
     private View bottomBar;
@@ -86,6 +91,8 @@ public class ReaderActivity extends AppCompatActivity
     private TextView bookSubtitle;
     private TextView statusView;
     private MaterialButton btnListen;
+    /** 听书中才出现在右上角的「退出朗读」：菜单收着也够得着。 */
+    private MaterialButton btnTtsExit;
     private androidx.drawerlayout.widget.DrawerLayout drawer;
 
     private long bookId;
@@ -178,6 +185,7 @@ public class ReaderActivity extends AppCompatActivity
         bookSubtitle = findViewById(R.id.book_subtitle);
         statusView = findViewById(R.id.reader_status);
         btnListen = findViewById(R.id.btn_listen);
+        btnTtsExit = findViewById(R.id.btn_tts_exit);
         drawer = findViewById(R.id.drawer_layout);
     }
 
@@ -253,14 +261,18 @@ public class ReaderActivity extends AppCompatActivity
     }
 
     /**
-     * 音量键上下翻一屏。**不拦截音量本身**——返回 false，音量照样调。
+     * 音量键上下翻一屏。**菜单收起时才接管**——顶栏/底栏露出来就说明用户在操作界面
+     * （听书时尤其要调音量），这时候把键还给系统，返回 false 让音量照常变。
      *
-     * <p>只处理「短按音量键」：连按不算连翻，避免一手滑过整个音量条就滚过半章。
+     * <p>只处理「短按」：长按（repeatCount &gt; 0）也交回系统，避免一手滑过整个音量条就滚过半章。
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode != KeyEvent.KEYCODE_VOLUME_UP && keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
             return super.onKeyDown(keyCode, event);
+        }
+        if (menuShown) {
+            return super.onKeyDown(keyCode, event); // 菜单开着：音量键调音量，不翻页
         }
         if (event.getRepeatCount() > 0) {
             return super.onKeyDown(keyCode, event); // 长按不连翻
@@ -273,12 +285,8 @@ public class ReaderActivity extends AppCompatActivity
         return true;
     }
 
-    /** 上下滚一屏：音量键和点按空白共用。到头就顺延到相邻章节。 */
+    /** 上下滚一屏（音量键专用）。到头就顺延到相邻章节。 */
     private void scrollByScreen(int dir) {
-        if (menuShown) {
-            hideMenu();
-            return;
-        }
         if (!list.canScrollVertically(dir)) {
             int target = currentIdx + dir;
             if (target >= 0 && target < chapters.size()) {
@@ -414,12 +422,13 @@ public class ReaderActivity extends AppCompatActivity
         findViewById(R.id.btn_chapter_prev).setOnClickListener(v -> stepChapter(-1));
         findViewById(R.id.btn_chapter_next).setOnClickListener(v -> stepChapter(1));
         btnListen.setOnClickListener(v -> onListenClick());
+        btnTtsExit.setOnClickListener(v -> exitListening());
         findViewById(R.id.btn_settings).setOnClickListener(v -> toggleSettings());
         findViewById(R.id.btn_brightness).setOnClickListener(v -> toggleBrightness());
         // 翻译服务配置入口放在阅读器里：用户是在这里撞上「未配置」的，
         // 让他在同一个地方能改，而不是回书架再找一层菜单。
         findViewById(R.id.btn_api_settings).setOnClickListener(v ->
-                startActivity(new Intent(this, SettingsActivity.class)));
+                startActivity(new Intent(this, TranslationSettingsActivity.class)));
 
         tocAdapter = new TocAdapter(index -> {
             drawer.closeDrawers();
@@ -442,17 +451,22 @@ public class ReaderActivity extends AppCompatActivity
 
             @Override
             public void onAddVocab(WordEntry entry) {
-                Toast.makeText(ReaderActivity.this, R.string.vocab_added, Toast.LENGTH_SHORT).show();
+                addToVocab(cardPara, cardWord, entry);
             }
         });
     }
 
     private void applyWindowInsets() {
         View root = findViewById(R.id.reader);
+        View drawer = findViewById(R.id.toc_drawer);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             // 正文让出状态栏和导航栏，菜单自己再加一层内边距
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            // 目录抽屉是 DrawerLayout 的兄弟，不在 reader 的 padding 里。不单独垫的话，
+            // 「目录」这个标题会直接压在状态栏的时间上（实测）。左右内边距保持原样。
+            drawer.setPadding(drawer.getPaddingLeft(), bars.top,
+                    drawer.getPaddingRight(), bars.bottom);
             return insets;
         });
     }
@@ -668,6 +682,13 @@ public class ReaderActivity extends AppCompatActivity
 
     private void toggleSettings() {
         boolean show = settingsPanel.getVisibility() != View.VISIBLE;
+        if (show) {
+            // 面板内容比屏幕还高，全展开会把正文整块盖掉。限到屏幕的 55%（且不超过 560dp），
+            // 其余交给面板内部的 ScrollView。给固定高度而不是 wrap_content：一次算完，不用等布局。
+            float density = getResources().getDisplayMetrics().density;
+            int cap = (int) Math.min(getResources().getDisplayMetrics().heightPixels * 0.55f, 560 * density);
+            settingsPanel.getLayoutParams().height = cap;
+        }
         settingsPanel.setVisibility(show ? View.VISIBLE : View.GONE);
         brightnessPanel.setVisibility(View.GONE);
         bottomBar.post(this::resetBottomBar);
@@ -901,6 +922,13 @@ public class ReaderActivity extends AppCompatActivity
         startListening();
     }
 
+    /** 退出朗读。按钮与高亮靠回来的 IDLE 快照收起，这里只管发命令。 */
+    private void exitListening() {
+        if (ttsService != null) {
+            ttsService.stop();
+        }
+    }
+
     /** 从当前可见的那一句开始念——用户点「听书」时眼睛就在那里。 */
     private void startListening() {
         if (!ttsBound || ttsService == null || paragraphs.isEmpty() || chapters.isEmpty()) {
@@ -1017,6 +1045,9 @@ public class ReaderActivity extends AppCompatActivity
 
     private void syncListenButton() {
         boolean mine = lastTts != null && lastTts.bookId == bookId;
+        // 「退出朗读」只在本书真有朗读会话时出现：念着或暂停着都算，IDLE 才收起
+        boolean active = mine && ttsState != TtsController.STATE_IDLE;
+        btnTtsExit.setVisibility(active ? View.VISIBLE : View.GONE);
         if (mine && ttsState == TtsController.STATE_PLAYING) {
             btnListen.setText(R.string.reader_listen_pause);
         } else if (mine && ttsState == TtsController.STATE_PAUSED) {
@@ -1040,8 +1071,56 @@ public class ReaderActivity extends AppCompatActivity
 
     @Override
     public void onWordLongPress(Paragraph p, String word, int start, int end) {
-        // M5 接生词本 + M4 接朗读；在那之前至少让长按有可见反馈
-        showWordCard(p, word, start, end);
+        // 长按 = 一键加生词本。M3 补丁 3 修好事件分发后，长按才是真长按；
+        // 单击查词仍是主路径（D2 词优先），长按只是省一步「先弹卡再点加生词本」。
+        addToVocab(p, word, null);
+    }
+
+    /**
+     * 加入生词本。两条入口（长按、词卡上的「加生词本」）共用这一条路：
+     * 查词（本地词典，不联网）在 IO 上做，落库与提示只有 {@link #storeVocab} 一个出口。
+     *
+     * @param entry 词卡已经查过词时直接传进来，省一次词典查询
+     */
+    private void addToVocab(Paragraph p, String word, WordEntry entry) {
+        if (p == null || word == null) {
+            return;
+        }
+        // 章节 id 在主线程取好再进 IO：进去之后 currentIdx 可能已经被翻章改掉
+        final long chapterId = chapters.isEmpty() ? 0 : chapters.get(currentIdx).id;
+        final Paragraph para = p;
+        final String w = word;
+        ((App) getApplication()).io().execute(() -> {
+            WordEntry e = entry != null ? entry : dict.lookup(Tokenizer.lookupKey(w));
+            storeVocab(vocabOf(para, w, e, chapterId));
+        });
+    }
+
+    /** 落库 + 提示。**只在 IO 线程调用**（要写库）。 */
+    private void storeVocab(VocabEntry v) {
+        long id = new VocabDao(Db.of(getApplicationContext())).add(v);
+        runOnUiThread(() -> Toast.makeText(this,
+                getString(id < 0 ? R.string.vocab_exists_word : R.string.vocab_added_word, v.word),
+                Toast.LENGTH_SHORT).show());
+    }
+
+    /**
+     * 生词本一行。语境就是这一段的原文——正文一句话一段（M2 补丁 5），
+     * 所以「命中处的原句」不用再从段里切一次。
+     */
+    private VocabEntry vocabOf(Paragraph p, String word, WordEntry entry, long chapterId) {
+        VocabEntry v = new VocabEntry();
+        v.word = word;
+        String key = Tokenizer.lookupKey(word);
+        v.lemma = entry != null && entry.lemma != null && !entry.lemma.isEmpty()
+                ? entry.lemma : key;
+        v.phon = entry == null ? null : entry.phonetic;
+        v.translation = entry == null ? null : entry.translation;
+        v.sentence = p.text;
+        v.bookId = bookId;
+        v.chapterId = chapterId;
+        v.paraId = p.id;
+        return v; // createdAt 留 0，DAO 落库时补当前时间
     }
 
     /** 查词走 IO 线程，弹窗回主线程；两条手势共用这一条路径。 */
@@ -1050,6 +1129,8 @@ public class ReaderActivity extends AppCompatActivity
         if (anchor == null) {
             return; // 段落还没画出来，宁可不弹
         }
+        cardPara = p;
+        cardWord = word;
         String key = Tokenizer.lookupKey(word);
         ((App) getApplication()).io().execute(() -> {
             WordEntry entry = dict.lookup(key);
@@ -1095,7 +1176,7 @@ public class ReaderActivity extends AppCompatActivity
         }
         if (!api.isConfigured()) {
             Toast.makeText(this, R.string.reader_need_api_key, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, TranslationSettingsActivity.class));
             return;
         }
         translateOne(p);
@@ -1105,7 +1186,7 @@ public class ReaderActivity extends AppCompatActivity
     public void onTranslateRetry(Paragraph p) {
         if (!api.isConfigured()) {
             Toast.makeText(this, R.string.reader_need_api_key, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, TranslationSettingsActivity.class));
             return;
         }
         // 不在这里写库（会是主线程写库）：成功后 TransQueue 会覆盖成 DONE，

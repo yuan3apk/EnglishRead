@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 阅读页。正文铺满；上下两条菜单默认在屏幕外，点中间才滑入。 -->
+<!-- 阅读页。正文铺满；上下两条菜单默认在屏幕外，点中间才滑入。
+     两条菜单都用「纸白 + 一条 1dp 暖灰分割线」，而不是靠阴影压住正文。 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 阅读区左下角的常驻小状态：章节号 + 本屏页码，菜单收起时也能定位 -->
+    <!-- 阅读区左下角的常驻小状态：章节号 + 本屏进度，菜单收起时也能定位 -->
     <TextView
         android:id="@+id/reader_status"
         style="@style/TextAppearance.EnglishRead.Caption"
@@ -28,18 +29,44 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/reader_side_margin"
         android:layout_marginBottom="@dimen/space_s"
-        android:alpha="0.5"
+        android:alpha="0.45"
         android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="第 1 章 · 2/9" />
+
+    <!-- 听书中才出现的「退出朗读」：菜单是收起的，所以它必须自己浮在正文上。
+         放在右上角——菜单呼出时那一块本来也是空的（顶部栏只有返回键与标题）。 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_tts_exit"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:layout_marginEnd="@dimen/space_s"
+        android:elevation="6dp"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:minWidth="0dp"
+        android:stateListAnimator="@null"
+        android:text="@string/reader_tts_exit"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_headphones"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/space_xs"
+        app:iconSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 顶部菜单 -->
     <LinearLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
+        android:background="@color/card_surface"
         android:elevation="4dp"
         android:orientation="vertical"
         android:paddingTop="@dimen/space_s"
@@ -60,7 +87,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:contentDescription="@string/reader_back"
-                app:icon="@android:drawable/ic_menu_revert" />
+                app:icon="@drawable/ic_arrow_back"
+                app:iconTint="?attr/colorOnSurface" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -71,7 +99,7 @@
 
                 <TextView
                     android:id="@+id/chapter_title"
-                    style="@style/TextAppearance.EnglishRead.Title"
+                    style="@style/TextAppearance.EnglishRead.BookTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -89,6 +117,12 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_s"
+            android:background="@color/outline_soft" />
     </LinearLayout>
 
     <!-- 底部菜单：功能入口 + 展开后的设置面板 -->
@@ -96,60 +130,56 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
+        android:background="@color/card_surface"
         android:elevation="4dp"
         android:orientation="vertical"
-        android:paddingTop="@dimen/space_s"
-        android:paddingBottom="@dimen/space_m"
+        android:paddingBottom="@dimen/space_s"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/outline_soft" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/space_s">
 
+            <!-- 五个入口统一「图标在上、11sp 文字在下」：五个纯文字按钮排一行认不出哪个是哪个 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_toc"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reader_toc" />
+                style="@style/Widget.EnglishRead.BarButton"
+                android:text="@string/reader_toc"
+                app:icon="@drawable/ic_list" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_chapter_prev"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reader_prev_chapter" />
+                style="@style/Widget.EnglishRead.BarButton"
+                android:text="@string/reader_prev_chapter"
+                app:icon="@drawable/ic_skip_prev" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_chapter_next"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reader_next_chapter" />
+                style="@style/Widget.EnglishRead.BarButton"
+                android:text="@string/reader_next_chapter"
+                app:icon="@drawable/ic_skip_next" />
 
             <!-- 听书：空闲时从当前可见的那一句开始念，念着的时候这个按钮就是暂停 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_listen"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reader_listen" />
+                style="@style/Widget.EnglishRead.BarButton"
+                android:text="@string/reader_listen"
+                app:icon="@drawable/ic_headphones" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_settings"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reader_settings" />
+                style="@style/Widget.EnglishRead.BarButton"
+                android:text="@string/reader_settings"
+                app:icon="@drawable/ic_tune" />
 
         </LinearLayout>
 
@@ -162,7 +192,7 @@
 
     </LinearLayout>
 
-    <!-- 亮度浮层：盖住全屏，点它收起 -->
+    <!-- 亮度浮层：盖住正文，点它收起 -->
     <LinearLayout
         android:id="@+id/brightness_panel"
         android:layout_width="match_parent"
@@ -180,7 +210,7 @@
         app:layout_constraintVertical_bias="0.75">
 
         <TextView
-            style="@style/TextAppearance.EnglishRead.Caption"
+            style="@style/TextAppearance.EnglishRead.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/reader_brightness" />
@@ -189,6 +219,7 @@
             android:id="@+id/brightness_seek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
             android:max="100" />
 
         <com.google.android.material.materialswitch.MaterialSwitch

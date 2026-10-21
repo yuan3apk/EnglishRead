@@ -173,6 +173,8 @@ public final class ImportHelper {
     }
 
     private void fail(Callback cb, Exception e) {
+        // 失败只在 toast 里一闪而过，日志留一份堆栈才查得动（R3：解析失败要可见可上报）
+        android.util.Log.w("ImportHelper", "导入失败", e);
         String msg = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
         postFail(cb, app.getString(R.string.library_import_failed, msg));
     }

@@ -1,6 +1,8 @@
 package com.englishread.app.tts;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.os.Handler;
@@ -290,6 +292,8 @@ public class TtsController {
             return;
         }
         Log.w(TAG, "engine init timed out twice, give up");
+        // 先读默认引擎再 shutdown：shutdownEngine() 会把 tts 置空，日志就只剩 default=null
+        logEngineState("engine init timed out (no onInit in " + INIT_TIMEOUT_MS + "ms)");
         shutdownEngine();
         init = INIT_FAILED;
         initError = ERR_NO_ENGINE;
@@ -308,7 +312,7 @@ public class TtsController {
         if (status != TextToSpeech.SUCCESS) {
             init = INIT_FAILED;
             initError = ERR_NO_ENGINE;
-            Log.w(TAG, "engine init failed: " + status + ", default=" + tts.getDefaultEngine());
+            logEngineState("engine init failed: " + status);
             reportPendingError();
             return;
         }
@@ -343,6 +347,45 @@ public class TtsController {
         pendingStart = false;
         setState(STATE_IDLE);
         listener.onError(initError);
+    }
+
+    /**
+     * 引擎起不来时把「应用进程究竟看得见什么」一次打全：默认引擎包名、能解析到的引擎个数与包名。
+     *
+     * <p>这三段拼起来就是分诊结论，别再笼统当成「没装引擎」：
+     * <ul>
+     *   <li>{@code default=null} + {@code engines=0}：真的没有可用引擎（没装 / 被停用）；</li>
+     *   <li>{@code default=包名} + {@code engines=0}：**包可见性**——manifest 缺 TTS_SERVICE 的
+     *       {@code <queries>}，应用进程看不见这个包，bind 直接被拦，框架立刻回调
+     *       {@code onInit(-1)}（OPPO PJW110 / Android 16 实测，加完声明即恢复）；</li>
+     *   <li>{@code engines=N>0} 但 init 仍失败：引擎自身的问题（被冻结 / 崩溃 / 权限）。</li>
+     * </ul>
+     */
+    private void logEngineState(String why) {
+        String dflt;
+        try {
+            dflt = tts == null ? null : tts.getDefaultEngine();
+        } catch (RuntimeException e) {
+            dflt = "<" + e.getClass().getSimpleName() + ">";
+        }
+        StringBuilder sb = new StringBuilder(why).append(", default=").append(dflt);
+        try {
+            List<ResolveInfo> list = ctx.getPackageManager().queryIntentServices(
+                    new Intent(TextToSpeech.Engine.INTENT_ACTION_TTS_SERVICE), 0);
+            sb.append(", engines=").append(list.size());
+            for (ResolveInfo ri : list) {
+                if (ri.serviceInfo != null) {
+                    sb.append(" [").append(ri.serviceInfo.packageName).append(']');
+                }
+            }
+            if (list.isEmpty()) {
+                sb.append(" —— 应用进程看不到任何引擎：没装/被停用，或 manifest 缺 ");
+                sb.append("TTS_SERVICE 的 <queries> 声明");
+            }
+        } catch (RuntimeException e) {
+            sb.append(", query engines failed: ").append(e);
+        }
+        Log.w(TAG, sb.toString());
     }
 
     /**

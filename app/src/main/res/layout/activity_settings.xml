@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 全局设置：翻译服务三件套 + 隐私提示。整块可滚动，键盘弹起时也不裁。 -->
+<!-- 设置首页：只做导航，两个入口（翻译配置 / 界面主题）。
+     入口做成「图标底座 + 标题 + 副标题 + 箭头」的行卡：图标先定位，副标题说清点进去能改什么，
+     比两张只有文字的卡片好扫。 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settings_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
@@ -10,10 +13,11 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/settings_toolbar"
+        style="@style/Widget.EnglishRead.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@android:drawable/ic_menu_revert"
-        app:title="@string/settings_title"/>
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/settings_title" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,126 +29,121 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/space_m"
             android:paddingTop="@dimen/space_m"
             android:paddingBottom="@dimen/space_l">
 
-            <TextView
-                style="@style/TextAppearance.EnglishRead.Title"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/row_translation"
+                style="@style/Widget.EnglishRead.Card.Clickable"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_translation" />
+                android:layout_height="wrap_content">
 
-            <!-- 模板：一键填好地址与模型名，用户只需要贴自己的 Key。
-                 模型名和地址都会过期（DeepSeek 就把 deepseek-chat 改成了 deepseek-flash），
-                 所以填完仍可手改，模板不是硬约束。 -->
-            <TextView
-                style="@style/TextAppearance.EnglishRead.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:text="@string/settings_template_hint" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/template_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                app:singleLine="false"
-                app:singleSelection="true"
-                app:selectionRequired="false" />
-
-            <TextView
-                android:id="@+id/template_note"
-                style="@style/TextAppearance.EnglishRead.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                android:alpha="0.8"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:visibility="gone"
-                tools:text="国内直连，便宜，适合段落翻译"
-                tools:visibility="visible" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_base_url_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:hint="@string/settings_api_base_url">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_base_url"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textUri"
-                    android:maxLines="1"
-                    tools:text="https://api.deepseek.com" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_m">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_api_key_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    <ImageView
+                        style="@style/Widget.EnglishRead.IconBadge"
+                        android:layout_width="@dimen/icon_badge"
+                        android:layout_height="@dimen/icon_badge"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_translate" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_m"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextAppearance.EnglishRead.Title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_entry_translation" />
+
+                        <TextView
+                            style="@style/TextAppearance.EnglishRead.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/settings_entry_translation_desc" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/row_theme"
+                style="@style/Widget.EnglishRead.Card.Clickable"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:hint="@string/settings_api_key"
-                app:endIconMode="password_toggle">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_api_key"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_m">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_model_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:hint="@string/settings_api_model">
+                    <ImageView
+                        style="@style/Widget.EnglishRead.IconBadge"
+                        android:layout_width="@dimen/icon_badge"
+                        android:layout_height="@dimen/icon_badge"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_palette" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_model"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    tools:text="deepseek-chat" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_m"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-            <!-- 隐私提示不是可选项：段落原文明文出网，用户必须知道 -->
+                        <TextView
+                            style="@style/TextAppearance.EnglishRead.Title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_entry_theme" />
+
+                        <!-- 副标题由代码填「当前：深浅」，回到这页就能看到现值 -->
+                        <TextView
+                            android:id="@+id/row_theme_desc"
+                            style="@style/TextAppearance.EnglishRead.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            tools:text="当前：跟随系统" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 style="@style/TextAppearance.EnglishRead.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:text="@string/settings_privacy_hint" />
-
-            <TextView
-                android:id="@+id/settings_error"
-                style="@style/TextAppearance.EnglishRead.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:textColor="?attr/colorError"
-                android:visibility="gone"
-                tools:text="接口地址必须是 https://"
-                tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:text="@string/settings_save" />
+                android:layout_marginHorizontal="@dimen/space_l"
+                android:layout_marginTop="@dimen/space_s"
+                android:lineSpacingMultiplier="1.4"
+                android:text="@string/settings_footer" />
 
         </LinearLayout>
-
     </ScrollView>
 
 </LinearLayout>

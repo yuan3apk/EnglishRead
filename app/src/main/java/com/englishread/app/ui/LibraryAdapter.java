@@ -56,11 +56,16 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int position) {
         Book b = items.get(position);
         h.title.setText(b.title);
+        // 书名用衬线：资源里的 fontFamily 会被主题的 textAppearance 盖回无衬线（实测），
+        // 只有代码设才稳。首页这一处最显眼，值得多一行。
+        h.title.setTypeface(android.graphics.Typeface.SERIF, android.graphics.Typeface.BOLD);
         // 没有作者就整行收起来，否则每张卡都空一行，列表节奏会乱
         boolean hasAuthor = b.author != null && !b.author.trim().isEmpty();
         h.author.setText(hasAuthor ? b.author : "");
         h.author.setVisibility(hasAuthor ? View.VISIBLE : View.GONE);
-        h.progress.setText(String.format(Locale.US, "%.0f%%", b.progressPct * 100));
+        int pct = Math.round(b.progressPct * 100);
+        h.progress.setText(String.format(Locale.US, "%d%%", pct));
+        h.progressBar.setProgressCompat(pct, false);
 
         // 封面是 48x64 的缩略图，直接主线程解码：几百 KB 的 jpg 也就几毫秒。
         // ponytail: 书多了（>200）再换后台解码 + 环形缓存，现在不值得。
@@ -94,6 +99,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.VH> {
         final TextView title;
         final TextView author;
         final TextView progress;
+        final com.google.android.material.progressindicator.LinearProgressIndicator progressBar;
         final android.widget.ImageView cover;
 
         VH(View v) {
@@ -101,6 +107,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.VH> {
             title = v.findViewById(R.id.title);
             author = v.findViewById(R.id.author);
             progress = v.findViewById(R.id.progress);
+            progressBar = v.findViewById(R.id.progress_bar);
             cover = v.findViewById(R.id.cover);
         }
     }

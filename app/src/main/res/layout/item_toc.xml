@@ -4,9 +4,10 @@
     android:id="@+id/toc_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:ellipsize="end"
     android:maxLines="2"
     android:paddingHorizontal="@dimen/space_m"
-    android:paddingVertical="@dimen/space_m"
+    android:paddingVertical="14dp"
     android:textSize="15sp"
     tools:text="Chapter 1" />

@@ -248,6 +248,9 @@ public class ReaderAdapter extends RecyclerView.Adapter<ReaderAdapter.VH> {
     private void bindContent(VH h, Paragraph p) {
         // 只放原文，任何装饰都不许拼进来
         h.text.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        // 衬线在这里显式设：写在 style / textAppearance 里都会被主题那套无衬线盖掉
+        // （实测正文一直是 Roboto，换了两种写法都一样）。正文是英文，衬线才是「书」。
+        h.text.setTypeface(android.graphics.Typeface.SERIF);
         h.text.setLineSpacing(0f, lineSpacingMult);
         h.text.setLetterSpacing(letterSpacingEm);
         applySpans(h.text, p);

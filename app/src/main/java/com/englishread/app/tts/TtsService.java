@@ -135,6 +135,11 @@ public class TtsService extends Service implements TtsController.Listener {
         controller.resume();
     }
 
+    /** 退出朗读：停声、撤通知、收高亮，全在 {@code onState(STATE_IDLE)} 里收尾。 */
+    public void stop() {
+        controller.stop();
+    }
+
     public void toggle() {
         TtsController.Snapshot s = controller.snapshot();
         if (s.state == TtsController.STATE_PLAYING) {

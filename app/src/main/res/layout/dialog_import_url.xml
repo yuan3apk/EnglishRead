@@ -8,9 +8,10 @@
     android:paddingTop="@dimen/space_s">
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/Widget.EnglishRead.Input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
         android:hint="@string/import_url_hint">
 
         <com.google.android.material.textfield.TextInputEditText

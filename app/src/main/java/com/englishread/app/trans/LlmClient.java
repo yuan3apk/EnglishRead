@@ -81,7 +81,7 @@ public class LlmClient {
             return Result.fail("未配置翻译服务", false);
         }
         String endpoint = TransProtocol.endpoint(config.baseUrl());
-        // https 的强制在 SettingsActivity 里做：那是「用户能输入什么」的规则，
+        // https 的强制在 TranslationSettingsActivity 里做：那是「用户能输入什么」的规则，
         // 客户端只管把配置的地址打出去（也让本地假服务能进仪器测试）。
 
         String body = requestBody(config.model(), paragraphs, endpoint);

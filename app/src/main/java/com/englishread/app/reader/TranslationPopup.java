@@ -51,6 +51,8 @@ public class TranslationPopup {
         View addVocab = content.findViewById(R.id.add_vocab);
 
         title.setText(word);
+        // 词头用衬线（资源里设不住，见 LibraryAdapter 的说明）
+        title.setTypeface(android.graphics.Typeface.SERIF, android.graphics.Typeface.BOLD);
         if (entry != null && entry.phonetic != null && !entry.phonetic.isEmpty()) {
             phonetic.setText("/" + entry.phonetic + "/");
             phonetic.setVisibility(View.VISIBLE);

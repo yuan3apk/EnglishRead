@@ -3,8 +3,10 @@
     <string name="app_name">EnglishRead</string>
 
     <!-- 书架 -->
+    <string name="library_title">书架</string>
     <string name="action_import">导入书籍</string>
-    <string name="library_empty">书架还是空的\n导入一本英文书开始阅读</string>
+    <string name="library_empty_title">书架还是空的</string>
+    <string name="library_empty_body">从本地文件或 URL 导入一本 EPUB / TXT\n阅读时点单词查释义，点「段」看整句译文</string>
     <string name="library_importing">正在导入…</string>
     <string name="library_downloading">正在下载…</string>
     <string name="library_import_failed">导入失败：%1$s</string>
@@ -43,6 +45,7 @@
     <string name="reader_chars_value">%1$d 字</string>
     <string name="reader_value_off">关</string>
     <string name="reader_theme">主题</string>
+    <string name="reader_section_type">排版</string>
     <string name="reader_theme_system">跟随系统</string>
     <string name="reader_theme_light">浅色</string>
     <string name="reader_theme_dark">深色</string>
@@ -59,12 +62,24 @@
     <string name="action_play">朗读</string>
     <string name="action_pause">暂停</string>
     <string name="action_add_vocab">加生词本</string>
-    <string name="vocab_added">已加入生词本</string>
+
+    <!-- 生词本（M5） -->
+    <string name="vocab_title">生词本</string>
+    <string name="vocab_empty">生词本还是空的\n阅读时长按单词即可加入</string>
+    <string name="vocab_empty_filtered">没有符合条件的生词\n换本书、或关掉「只看未掌握」看看</string>
+    <string name="vocab_mastered">已掌握</string>
+    <string name="vocab_only_unmastered">只看未掌握</string>
+    <string name="vocab_filter_all">全部书籍</string>
+    <string name="vocab_filter_title">按书筛选</string>
+    <string name="vocab_from_book">来自《%1$s》</string>
+    <string name="vocab_added_word">已加入生词本：%1$s</string>
+    <string name="vocab_exists_word">已在生词本：%1$s</string>
 
     <!-- 听书（M4） -->
     <string name="reader_listen">听书</string>
     <string name="reader_listen_pause">暂停</string>
     <string name="reader_listen_resume">继续</string>
+    <string name="reader_tts_exit">退出朗读</string>
     <string name="reader_tts_section">听书</string>
     <string name="reader_speech_rate">语速</string>
     <string name="reader_speech_rate_value">%1$.2f×</string>
@@ -96,8 +111,12 @@
     <string name="settings_api_key">API Key</string>
     <string name="settings_api_model">模型</string>
     <string name="settings_privacy_hint">段落原文会发送到上面配置的第三方翻译服务。单词释义走本地词典，不联网。已翻译过的段落会缓存在本机，再次展开不会重复请求。</string>
+    <string name="settings_data_source_title">词典与数据来源</string>
+    <string name="settings_data_source">单词释义：内置 ECDICT 裁剪词库（约 8 万词条），完全离线，数据来自 ECDICT（MIT 许可）。\n段落译文：只发送你点开的那一句，由上面配置的翻译服务生成。\n译文语言：简体中文（当前只支持英译中）。\n阅读进度与生词本只存在本机。</string>
     <string name="settings_save">保存</string>
     <string name="settings_template_hint">选一家厂商，自动填好地址与模型名；Key 仍需你自己粘贴</string>
+    <string name="settings_template_section">服务商模板</string>
+    <string name="settings_api_section">接口</string>
     <string name="settings_key_page">申请 Key：%1$s</string>
     <string name="settings_template_ollama_warning">本机 Ollama 只在 debug 包可用，正式版会拒绝明文地址</string>
     <string name="settings_saved">已保存</string>
@@ -108,4 +127,19 @@
     <string name="settings_open">翻译服务设置</string>
     <string name="reader_translate_retrying">重试中…</string>
     <string name="reader_translate_queued">翻译中…</string>
+
+    <!-- 设置首页（两个入口）与界面主题 -->
+    <string name="settings_entry_translation">翻译配置</string>
+    <string name="settings_entry_translation_desc">接口地址、API Key 与模型</string>
+    <string name="settings_entry_theme">界面主题</string>
+    <string name="settings_entry_theme_desc">当前：%1$s</string>
+    <string name="settings_translation_page">翻译配置</string>
+    <string name="settings_theme_page">界面主题</string>
+    <string name="settings_theme_section">明暗</string>
+    <string name="settings_theme_preview">预览</string>
+    <string name="settings_footer">单词释义走内置词典，完全离线；只有你点开的那一句段落译文会发给上方的翻译服务。</string>
+    <string name="settings_theme_hint">只影响阅读器之外的页面：书架、生词本、设置。阅读器的明暗在阅读器自己的设置里改，两边互不影响。</string>
+    <string name="ui_theme_system">跟随系统</string>
+    <string name="ui_theme_light">浅色</string>
+    <string name="ui_theme_dark">深色</string>
 </resources>

@@ -2,6 +2,8 @@ package com.englishread.app;
 
 import android.app.Application;
 
+import com.englishread.app.ui.UiTheme;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,6 +15,15 @@ import java.util.concurrent.Executors;
 public class App extends Application {
 
     private ExecutorService io;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // 界面主题（阅读器之外）必须在任何 Activity 创建之前落到进程上：
+        // 晚一步首屏就会先按系统主题画一遍、再闪一下切过去。
+        // 阅读器不受影响——它自己在 onCreate 里 setLocalNightMode，local 优先于这里。
+        UiTheme.apply(this);
+    }
 
     public ExecutorService io() {
         if (io == null) {

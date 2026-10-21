@@ -128,7 +128,7 @@ public final class TransProtocol {
 
     private static final Pattern VERSION_SEGMENT = Pattern.compile("/v\\d+$");
 
-    /** 只接受 https：明文传输段落原文不可接受，见 SettingsActivity 里的提示。 */
+    /** 只接受 https：明文传输段落原文不可接受，见 TranslationSettingsActivity 里的提示。 */
     public static boolean isHttps(String url) {
         return url != null && url.trim().toLowerCase(java.util.Locale.US).startsWith("https://");
     }

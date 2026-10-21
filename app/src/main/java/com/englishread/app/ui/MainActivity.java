@@ -73,6 +73,22 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.fab_import).setOnClickListener(v -> showImportSource());
 
+        // 工具栏两个常驻入口：生词本、翻译服务设置。
+        // 书架没有底部导航栏，这里是唯一固定位置；不用 ActionBar 菜单，直接给 toolbar 挂菜单。
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu_main);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_vocab) {
+                startActivity(new Intent(this, VocabActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.action_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
+            return false;
+        });
+
         ViewCompat.setOnApplyWindowInsetsListener(main, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -151,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void confirmDelete(Book book) {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(book.title)
                 .setMessage("从书架删除这本书？译文和进度一并删除。")
                 .setNegativeButton(R.string.action_cancel, null)
