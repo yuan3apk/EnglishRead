@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 目录抽屉：从左侧滑出，列出全部章节，当前章高亮。 -->
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ReaderActivity">
+
+    <include layout="@layout/activity_reader" />
+
+    <LinearLayout
+        android:id="@+id/toc_drawer"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="?attr/colorSurface"
+        android:elevation="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TextAppearance.EnglishRead.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/space_m"
+            android:text="@string/reader_toc" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/toc_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_l"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

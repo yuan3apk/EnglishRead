@@ -1,65 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读页。正文铺满；上下两条菜单默认在屏幕外，点中间才滑入。 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/reader"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@android:drawable/ic_menu_revert">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/chapter_title"
-                style="@style/TextAppearance.EnglishRead.Title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_prev"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:text="@string/reader_prev_chapter" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_next"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:text="@string/reader_next_chapter" />
-
-        </LinearLayout>
-
-    </com.google.android.material.appbar.MaterialToolbar>
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/para_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/space_m"
+        android:paddingTop="@dimen/space_l"
         android:paddingBottom="@dimen/space_l"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 阅读区左下角的常驻小状态：章节号 + 本屏页码，菜单收起时也能定位 -->
+    <TextView
+        android:id="@+id/reader_status"
+        style="@style/TextAppearance.EnglishRead.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/reader_side_margin"
+        android:layout_marginBottom="@dimen/space_s"
+        android:alpha="0.5"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="第 1 章 · 2/9" />
+
+    <!-- 顶部菜单 -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_s"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_s">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_back"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/reader_back"
+                app:icon="@android:drawable/ic_menu_revert" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_s">
+
+                <TextView
+                    android:id="@+id/chapter_title"
+                    style="@style/TextAppearance.EnglishRead.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="Chapter 1" />
+
+                <TextView
+                    android:id="@+id/book_subtitle"
+                    style="@style/TextAppearance.EnglishRead.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="Pride and Prejudice · 第 1/12 章" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 底部菜单：功能入口 + 展开后的设置面板 -->
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_m"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_s">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_toc"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reader_toc" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_chapter_prev"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reader_prev_chapter" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_chapter_next"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reader_next_chapter" />
+
+            <!-- 听书：空闲时从当前可见的那一句开始念，念着的时候这个按钮就是暂停 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_listen"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reader_listen" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_settings"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reader_settings" />
+
+        </LinearLayout>
+
+        <!-- 设置面板，默认收起 -->
+        <include
+            android:id="@+id/settings_panel"
+            layout="@layout/view_reader_settings"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- 亮度浮层：盖住全屏，点它收起 -->
+    <LinearLayout
+        android:id="@+id/brightness_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:background="@drawable/bg_popup"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="@dimen/space_m"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75">
+
+        <TextView
+            style="@style/TextAppearance.EnglishRead.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/reader_brightness" />
+
+        <SeekBar
+            android:id="@+id/brightness_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/brightness_follow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/reader_brightness_follow_system" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

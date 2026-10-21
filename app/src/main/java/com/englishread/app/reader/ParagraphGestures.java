@@ -23,6 +23,9 @@ public class ParagraphGestures implements View.OnTouchListener {
         void onWordTap(String word, int start, int end);
 
         void onWordLongPress(String word, int start, int end);
+
+        /** 点到了空白/标点/行尾，没命中词：呼出或收起菜单。 */
+        void onBlankTap();
     }
 
     private final TextView view;
@@ -56,6 +59,11 @@ public class ParagraphGestures implements View.OnTouchListener {
         // 选区与 movement method 会抢事件，必须关掉
         view.setMovementMethod(null);
         view.setTextIsSelectable(false);
+        // 正文必须是「可点击」的触摸目标。不消费 DOWN 的话，RecyclerView 会接管整个手势，
+        // 正文只收到一个 DOWN、永远等不到 UP/CANCEL——而 GestureDetector 的 500ms 长按计时器
+        // 是按下时就启动的，到点照样触发：于是「滑到一半手指停在一个词上」会莫名其妙弹词卡。
+        // 注意顺序：setTextIsSelectable(false) 内部会把 clickable 置回 false，所以必须写在它后面。
+        view.setClickable(true);
     }
 
     public void setTokens(@Nullable int[] starts, @Nullable int[] ends,
@@ -68,6 +76,10 @@ public class ParagraphGestures implements View.OnTouchListener {
 
     private boolean handle(MotionEvent e, boolean longPress) {
         if (starts == null || ends == null || words == null) {
+            // 没有词表说明这段还在加载，但空白点击仍应能翻页
+            if (!longPress) {
+                listener.onBlankTap();
+            }
             return false;
         }
         // 长按已经处理过这一次按下，抬手时别再补一个单击
@@ -82,6 +94,9 @@ public class ParagraphGestures implements View.OnTouchListener {
         }
         android.text.Layout layout = view.getLayout();
         if (layout == null) {
+            if (!longPress) {
+                listener.onBlankTap();
+            }
             return false;
         }
         int line = layout.getLineForVertical((int) y);
@@ -97,10 +112,17 @@ public class ParagraphGestures implements View.OnTouchListener {
 
         ReaderHitTest.Hit hit = ReaderHitTest.resolve(charUnder, starts, ends);
         if (!hit.isWord()) {
+            // 空白/标点/行尾：不查词，交给分区（左回退/中菜单/右前进）
+            if (!longPress) {
+                listener.onBlankTap();
+            }
             return false;
         }
         int i = indexOfStart(hit.start, starts);
         if (i < 0) {
+            if (!longPress) {
+                listener.onBlankTap();
+            }
             return false;
         }
         if (longPress) {
@@ -119,7 +141,7 @@ public class ParagraphGestures implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        // 永不消费：RecyclerView 仍要能滚
+        // 永不消费：RecyclerView 仍要能滚（滚动靠它拦截 MOVE，届时这里会收到 CANCEL）
         detector.onTouchEvent(event);
         return false;
     }

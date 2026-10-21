@@ -5,7 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/reader_para_spacing"
     android:orientation="vertical">
+
+    <!-- 上面那条 layout_marginBottom 是「句子之间的空白」，别顺手删掉或挪进子 View：
+         长句占满整屏时，正文里每一点几乎都压在一个单词上，没有这条空白就呼不出菜单。
+         它必须留在 item 根布局上——不属于任何 item 的矩形，ReaderActivity.hitContent
+         才会把它判成「空白」，点了就是呼菜单。挪进子 View 或改成 padding 都会被算成内容。
+         这里的 16dp 只是设计态与首帧的默认值，运行时由 ReaderAdapter.applyParaSpacing
+         按设置里的「段距」覆盖（所以改档位不需要重进页面）。 -->
 
     <TextView
         android:id="@+id/para_text"
@@ -60,6 +68,21 @@
         android:layout_marginEnd="@dimen/reader_side_margin"
         android:layout_marginTop="@dimen/space_xs"
         android:text="@string/reader_translate_failed"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <!-- 请求在飞时的提示，与「重试」互斥；都没有就是默认的安静状态 -->
+    <TextView
+        android:id="@+id/para_progress"
+        style="@style/TextAppearance.EnglishRead.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/reader_side_margin"
+        android:layout_marginTop="@dimen/space_xs"
+        android:alpha="0.7"
+        android:text="@string/reader_translating"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="gone"
         tools:visibility="visible" />

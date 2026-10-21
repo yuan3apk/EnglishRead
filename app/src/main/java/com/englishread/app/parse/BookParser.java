@@ -21,11 +21,16 @@ public final class BookParser {
      */
     public static ParsedBook parse(File src, String fallbackTitle, File coverOut) throws IOException {
         String name = src.getName().toLowerCase();
+        ParsedBook book;
         if (name.endsWith(".epub")) {
-            return EpubParser.parse(src, fallbackTitle, coverOut);
+            book = EpubParser.parse(src, fallbackTitle, coverOut);
+        } else {
+            try (FileInputStream in = new FileInputStream(src)) {
+                book = TxtParser.parse(TxtParser.readAll(in), fallbackTitle);
+            }
         }
-        try (FileInputStream in = new FileInputStream(src)) {
-            return TxtParser.parse(TxtParser.readAll(in), fallbackTitle);
-        }
+        // 一句话一个段落：两种格式都在这里统一切，解析器各自不用管
+        Sentences.splitBook(book);
+        return book;
     }
 }

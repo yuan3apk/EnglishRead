@@ -27,6 +27,13 @@ android {
             )
         }
     }
+
+    // SettingsActivity 用 BuildConfig.DEBUG 判断要不要放行本机明文接口
+    // （给 tools/fake_llm.py 做端到端验收）。AGP 8 默认不生成这个类。
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -46,6 +53,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
+    implementation(libs.drawerlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

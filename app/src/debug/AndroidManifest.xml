@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 只在 debug 包里放行明文，好让 tools/fake_llm.py 跑通端到端验收。
+     release 构建在 AndroidManifest.xml 里没有这一项，明文请求会被系统层拦住。 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic" />
+
+</manifest>
