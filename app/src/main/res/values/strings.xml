@@ -94,9 +94,9 @@
     <string name="tts_prev">上一句</string>
     <string name="tts_next">下一句</string>
     <string name="tts_error_title">无法朗读</string>
-    <string name="tts_no_engine">这台设备上找不到可用的语音引擎。请先安装或启用「文字转语音」（例如 Google 文字转语音），再回来点「听书」。</string>
+    <string name="tts_no_engine">这台设备上找不到可用的语音引擎。请先安装或启用「文字转语音」（例如 Google 文字转语音），再回来重试。</string>
     <string name="tts_no_english">语音引擎没有英语语音包。请到系统「文字转语音」设置里下载英语语音，再回来重试。</string>
-    <string name="tts_speak_failed">朗读启动失败，请再点一次「听书」。</string>
+    <string name="tts_speak_failed">朗读启动失败，请再试一次。</string>
     <string name="tts_open_settings">去系统设置</string>
     <string name="tts_error_close">知道了</string>
     <string name="tts_no_settings_page">系统里没有文字转语音设置页，请到「设置 → 无障碍」里找。</string>

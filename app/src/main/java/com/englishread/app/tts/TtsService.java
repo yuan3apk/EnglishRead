@@ -190,7 +190,7 @@ public class TtsService extends Service implements TtsController.Listener {
             stopSelf();
         }
         if (ui != null) {
-            ui.onTtsError(errorText(code));
+            ui.onTtsError(TtsController.errorText(this, code));
         }
     }
 
@@ -291,16 +291,5 @@ public class TtsService extends Service implements TtsController.Listener {
         ch.setDescription(getString(R.string.tts_channel_desc));
         ch.setShowBadge(false);
         notifications.createNotificationChannel(ch);
-    }
-
-    private String errorText(int code) {
-        switch (code) {
-            case TtsController.ERR_NO_ENGINE:
-                return getString(R.string.tts_no_engine);
-            case TtsController.ERR_NO_ENGLISH:
-                return getString(R.string.tts_no_english);
-            default:
-                return getString(R.string.tts_speak_failed);
-        }
     }
 }
