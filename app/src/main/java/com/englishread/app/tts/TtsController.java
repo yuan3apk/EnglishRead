@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
+import com.englishread.app.R;
 import com.englishread.app.data.Db;
 import com.englishread.app.data.ParagraphDao;
 import com.englishread.app.model.Chapter;
@@ -72,6 +73,18 @@ public class TtsController {
 
         /** 整本书读完（不是用户按停止）。 */
         void onFinished();
+    }
+
+    /** 引擎错误码 → 给人看的一句话。听书和词卡共用，省得两处文案走散。 */
+    public static String errorText(Context c, int code) {
+        switch (code) {
+            case ERR_NO_ENGINE:
+                return c.getString(R.string.tts_no_engine);
+            case ERR_NO_ENGLISH:
+                return c.getString(R.string.tts_no_english);
+            default:
+                return c.getString(R.string.tts_speak_failed);
+        }
     }
 
     /** 给界面/通知用的一次性快照。字段多但都是标量，别在这里放列表。 */

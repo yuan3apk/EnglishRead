@@ -51,6 +51,7 @@ import com.englishread.app.trans.LlmClient;
 import com.englishread.app.trans.TransQueue;
 import com.englishread.app.tts.TtsController;
 import com.englishread.app.tts.TtsService;
+import com.englishread.app.tts.WordSpeaker;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -76,6 +77,8 @@ public class ReaderActivity extends AppCompatActivity
     private ParagraphDao dao;
     private DictSource dict;
     private TranslationPopup popup;
+    /** 词卡上的喇叭：一次念一个词，跟听书那套状态机无关。 */
+    private WordSpeaker wordSpeaker;
     private ReaderPrefs prefs;
     private ApiConfig api;
     private TransQueue trans;
@@ -234,6 +237,9 @@ public class ReaderActivity extends AppCompatActivity
         // 退出阅读器就别再让飞行中的请求把译文写回界面
         if (trans != null) {
             trans.cancel();
+        }
+        if (wordSpeaker != null) {
+            wordSpeaker.close();
         }
         super.onDestroy();
     }
@@ -443,10 +449,12 @@ public class ReaderActivity extends AppCompatActivity
     }
 
     private void setupPopup() {
+        // 引擎直到第一次点喇叭才连（WordSpeaker 里延迟创建），打开阅读器不付这笔钱
+        wordSpeaker = new WordSpeaker(this, code -> onTtsError(TtsController.errorText(this, code)));
         popup = new TranslationPopup(this, new TranslationPopup.Listener() {
             @Override
             public void onSpeak(String word) {
-                Toast.makeText(ReaderActivity.this, word, Toast.LENGTH_SHORT).show();
+                wordSpeaker.speak(word, prefs.speechRate());
             }
 
             @Override
