@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ 的启动画面：底色用品牌青、图标就是新做的书，
+         别让系统拿默认白底 + 老图标先闪一下。
+         这里只覆盖 Theme.EnglishRead 本身（父样式不动，避免把 Base 的几十条 item 复制一遍）。 -->
+    <style name="Theme.EnglishRead" parent="Base.Theme.EnglishRead">
+        <item name="android:windowSplashScreenBackground">@color/brand_deep</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>

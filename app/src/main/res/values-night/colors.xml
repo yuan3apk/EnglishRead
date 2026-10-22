@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 深色主题：把「纸白」换成「墨黑上的浅一档」，其它同名色在这里覆盖，
+         布局一律引用色名，不写死十六进制（否则深色下必错）。 -->
+    <color name="card_surface">#FF1A1E1C</color>
+    <color name="outline_soft">#FF2B302E</color>
+    <color name="surface_variant">#FF272C2A</color>
+    <color name="brand_soft">#FF16241F</color>
+    <color name="accent">#FFD3A265</color>
+</resources>

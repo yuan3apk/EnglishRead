@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 没有封面的书：暖灰底 + 居中的小书水印，比一块空灰块像样 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_variant" />
+            <corners android:radius="@dimen/cover_radius" />
+        </shape>
+    </item>
+    <item
+        android:width="22dp"
+        android:height="22dp"
+        android:drawable="@drawable/ic_book_watermark"
+        android:gravity="center" />
+</layer-list>

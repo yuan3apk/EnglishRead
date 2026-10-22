@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 引文块：品牌浅底 + 左边缘一道暖金竖条。
+     竖条宽 3dp，文字的左内边距由布局里的 paddingStart 让开（别在这里做 padding，
+     layer-list 的 item 只有 23+ 才有 inset，多一层反而难对）。 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/brand_soft" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <item
+        android:width="3dp"
+        android:gravity="start|fill_vertical">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/accent" />
+            <corners
+                android:topLeftRadius="10dp"
+                android:bottomLeftRadius="10dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 界面主题：三档（跟随系统 / 浅色 / 深色）。
+     只作用于阅读器之外的页面——阅读器有自己的主题开关，走的是 local 夜间模式。
+     三档用分段按钮而不是单选列表：三个选项、一个动作，横排一眼看全。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/theme_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/theme_toolbar"
+        style="@style/Widget.EnglishRead.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/settings_theme_page" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_m"
+            android:paddingTop="@dimen/space_m"
+            android:paddingBottom="@dimen/space_l">
+
+            <TextView
+                style="@style/TextAppearance.EnglishRead.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_xs"
+                android:text="@string/settings_theme_section" />
+
+            <!-- 和阅读器设置面板同一个控件、同一套观感：三档单选，
+                 选中即生效（系统会按新配置重建界面，本页也会重建一次） -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ui_theme_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ui_theme_system"
+                    style="@style/Widget.EnglishRead.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="@string/ui_theme_system" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ui_theme_light"
+                    style="@style/Widget.EnglishRead.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="@string/ui_theme_light" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ui_theme_dark"
+                    style="@style/Widget.EnglishRead.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="@string/ui_theme_dark" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <TextView
+                style="@style/TextAppearance.EnglishRead.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:lineSpacingMultiplier="1.4"
+                android:text="@string/settings_theme_hint" />
+
+            <!-- 预览：这张卡用的就是当前主题的纸白/墨黑，选完立即跟着变 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EnglishRead.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_m">
+
+                    <TextView
+                        style="@style/TextAppearance.EnglishRead.Section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_theme_preview" />
+
+                    <TextView
+                        style="@style/TextAppearance.EnglishRead.BookTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:text="Pride and Prejudice" />
+
+                    <TextView
+                        style="@style/TextAppearance.EnglishRead.Quote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="It was the best of times, it was the worst of times." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

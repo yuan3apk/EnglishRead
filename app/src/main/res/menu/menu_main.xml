@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 工具栏两个常驻入口。图标比中文文字窄，两个都能常驻，不会被收进溢出菜单。 -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_vocab"
+        android:icon="@drawable/ic_bookmark"
+        android:title="@string/vocab_title"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_tune"
+        android:title="@string/settings_title"
+        app:showAsAction="always" />
+
+</menu>

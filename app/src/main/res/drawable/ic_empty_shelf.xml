@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 空书架插画：摊开的书 + 金色书签，线条稿。
+     颜色用固定值而不是主题色：它只在空态出现，米白/墨黑底上都要成立。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- 左页 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M60,44 C50,38 38,36 26,39 L26,96 C38,93 50,95 60,101 Z"
+        android:strokeColor="@color/brand"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="3" />
+    <!-- 右页 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M60,44 C70,38 82,36 94,39 L94,96 C82,93 70,95 60,101 Z"
+        android:strokeColor="@color/brand"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="3" />
+    <!-- 书脊 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M60,44 L60,101"
+        android:strokeColor="@color/brand"
+        android:strokeLineCap="round"
+        android:strokeWidth="3" />
+    <!-- 书签 -->
+    <path
+        android:fillColor="@color/accent"
+        android:pathData="M74,39 L82,40 L82,60 L78,55 L74,60 Z" />
+</vector>

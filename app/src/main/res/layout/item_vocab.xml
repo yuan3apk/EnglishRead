@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 生词本一行：词 + 音标 + 释义 + 命中处的原句 + 书名，右上角勾「已掌握」。
+     原句做成引文块（左边缘一道暖金），这样「词」和「语境」在视觉上是两层，
+     扫列表时先看到词，需要时再看句子。 -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.EnglishRead.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_m">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/word"
+                style="@style/TextAppearance.EnglishRead.WordTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="run" />
+
+            <TextView
+                android:id="@+id/phon"
+                style="@style/TextAppearance.EnglishRead.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:maxLines="1"
+                android:textColor="?attr/colorPrimary"
+                tools:text="/rʌn/" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/mastered"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_xs"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="@string/vocab_mastered"
+                android:textSize="11sp"
+                app:buttonTint="?attr/colorPrimary" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/translation"
+            style="@style/TextAppearance.EnglishRead.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingMultiplier="1.4"
+            tools:text="v. 跑，奔跑" />
+
+        <TextView
+            android:id="@+id/sentence"
+            style="@style/TextAppearance.EnglishRead.Quote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:background="@drawable/bg_quote"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingStart="12dp"
+            android:paddingTop="@dimen/space_s"
+            android:paddingEnd="@dimen/space_s"
+            android:paddingBottom="@dimen/space_s"
+            tools:text="It was the best of times." />
+
+        <TextView
+            android:id="@+id/book"
+            style="@style/Widget.EnglishRead.Tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="来自《Pride and Prejudice》" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

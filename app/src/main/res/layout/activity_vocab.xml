@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 生词本：顶部筛选（按书 / 只看未掌握）+ 列表。整页滚动交给 RecyclerView。
+     筛选条不用 Spinner：原生 Spinner 的三角形箭头是 Holo 时代的样子，
+     换成一个描边按钮（点开单选弹窗）+ 一个 chip，两个都是当前 Material 的观感。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vocab_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/vocab_toolbar"
+        style="@style/Widget.EnglishRead.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/vocab_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_m"
+        android:paddingBottom="@dimen/space_s">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vocab_book_filter"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="start|center_vertical"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/space_m"
+            android:text="@string/vocab_filter_all"
+            android:textSize="13sp"
+            app:icon="@drawable/ic_filter_list"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/space_s"
+            app:iconTint="?attr/colorPrimary" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/vocab_only_unmastered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:checkable="true"
+            android:text="@string/vocab_only_unmastered"
+            android:textSize="13sp"
+            app:checkedIconVisible="false"
+            app:chipStrokeColor="@color/outline_soft"
+            app:chipStrokeWidth="1dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/vocab_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/space_xs"
+            android:paddingBottom="@dimen/space_l" />
+
+        <LinearLayout
+            android:id="@+id/vocab_empty_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/space_xl"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:alpha="0.35"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_bookmark"
+                android:tint="?attr/colorOnSurfaceVariant" />
+
+            <!-- 这里的显隐由上层 vocab_empty_box 统一管，自己别再写 visibility="gone"，
+                 否则代码只切外层时会出现「只有一个图标、没有字」的空态（踩过）。 -->
+            <TextView
+                android:id="@+id/vocab_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.5"
+                android:text="@string/vocab_empty"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                tools:text="生词本还是空的" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>
